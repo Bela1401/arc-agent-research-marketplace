@@ -44,10 +44,11 @@ The homepage now includes a `Live Arc proof` section with real wallet addresses,
 
 1. Create a Circle standard API key
 2. Register the Circle entity secret through the Circle console/configurator
-3. Run `npm run arc:bootstrap`
-4. Fund the validator and client wallets from the Circle faucet
-5. Run `npm run arc:register-agents`
-6. Run:
+3. Set `ARC_ADMIN_API_TOKEN` for any deployed environment that exposes the `app/api/arc/*` routes
+4. Run `npm run arc:bootstrap`
+5. Fund the validator and client wallets from the Circle faucet
+6. Run `npm run arc:register-agents`
+7. Run:
    - `npm run arc:run-job research`
    - `npm run arc:run-job factCheck`
    - `npm run arc:run-job summary`
@@ -79,6 +80,7 @@ The repo now includes working integration-ready flows for:
 - wallet bootstrapping via Circle Developer-Controlled Wallets
 - agent registration and validation on `ERC-8004`
 - job creation and settlement on `ERC-8183`
+- token-protected mutation routes for safer cloud deployment
 
 Use these commands after filling `.env.local`:
 

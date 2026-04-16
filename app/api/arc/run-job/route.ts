@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requireArcAdminToken } from "@/lib/api-auth";
 import { z } from "zod";
 import { runConfiguredMarketplaceJob } from "@/lib/marketplace-integration";
 
@@ -9,6 +10,11 @@ const bodySchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    const unauthorized = requireArcAdminToken(request);
+    if (unauthorized) {
+      return unauthorized;
+    }
+
     const parsed = bodySchema.parse(await request.json().catch(() => ({})));
     const result = await runConfiguredMarketplaceJob(parsed.providerRole, parsed.description);
 

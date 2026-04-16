@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requireArcAdminToken } from "@/lib/api-auth";
 import { z } from "zod";
 import {
   type MarketplaceProviderRole,
@@ -11,6 +12,11 @@ const bodySchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    const unauthorized = requireArcAdminToken(request);
+    if (unauthorized) {
+      return unauthorized;
+    }
+
     const parsed = bodySchema.safeParse(await request.json().catch(() => ({})));
     const roles = (parsed.success ? parsed.data.roles : undefined) as
       | MarketplaceProviderRole[]
