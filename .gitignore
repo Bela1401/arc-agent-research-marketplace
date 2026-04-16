@@ -1,0 +1,14 @@
+node_modules
+.next
+out
+dist
+.env
+.env.local
+.env.production
+coverage
+*.log
+circle-recovery
+recovery_file*.dat
+*.dat
+*.tsbuildinfo
+.vercel

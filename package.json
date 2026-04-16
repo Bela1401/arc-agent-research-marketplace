@@ -1,0 +1,35 @@
+{
+  "name": "arc-agent-research-marketplace",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit -p tsconfig.check.json",
+    "circle:entity-secret:generate": "tsx scripts/setup-entity-secret.ts generate",
+    "circle:entity-secret:ciphertext": "tsx --env-file=.env.local scripts/setup-entity-secret.ts ciphertext",
+    "circle:entity-secret:register": "tsx --env-file=.env.local scripts/setup-entity-secret.ts register",
+    "arc:bootstrap": "tsx --env-file=.env.local scripts/bootstrap-wallets.ts",
+    "arc:register-agents": "tsx --env-file=.env.local scripts/register-marketplace-agents.ts",
+    "arc:run-job": "tsx --env-file=.env.local scripts/run-marketplace-job.ts"
+  },
+  "dependencies": {
+    "@circle-fin/developer-controlled-wallets": "^10.3.0",
+    "next": "15.3.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "viem": "2.30.0",
+    "zod": "3.24.4"
+  },
+  "devDependencies": {
+    "@types/node": "22.15.3",
+    "@types/react": "19.1.2",
+    "@types/react-dom": "19.1.2",
+    "eslint": "9.25.1",
+    "eslint-config-next": "15.3.0",
+    "tsx": "^4.21.0",
+    "typescript": "5.8.3"
+  }
+}
