@@ -26,6 +26,8 @@ Completed jobs:
 
 The homepage now includes a `Live Arc proof` section with real wallet addresses, real job IDs, and explorer links from the successful run.
 
+It also includes a browser launcher at `/launch` so you can create new jobs directly from a URL during the demo.
+
 ## Why this fits the hackathon
 
 - Natural `agent-to-agent` payment loop
@@ -52,6 +54,19 @@ The homepage now includes a `Live Arc proof` section with real wallet addresses,
    - `npm run arc:run-job research`
    - `npm run arc:run-job factCheck`
    - `npm run arc:run-job summary`
+
+## Browser-triggered jobs
+
+For hackathon demos, you can run a new job directly from the browser in two ways:
+
+1. Open `/launch` and submit the form
+2. Open a direct URL like:
+   `/api/arc/run-job?providerRole=research&description=Your+prompt&token=YOUR_TOKEN&format=html`
+
+Important:
+
+- the direct URL flow requires `ARC_ADMIN_API_TOKEN`
+- query-string tokens are less secure than headers and should only be used for demos/internal ops
 
 ## What is real vs mocked today
 

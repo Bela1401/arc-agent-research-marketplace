@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 const AUTH_HEADER = "x-arc-admin-token";
+const AUTH_QUERY_PARAM = "token";
 
 function readBearerToken(request: Request): string | null {
   const authorization = request.headers.get("authorization");
@@ -12,7 +13,15 @@ function readBearerToken(request: Request): string | null {
   return authorization.slice("Bearer ".length).trim();
 }
 
-export function requireArcAdminToken(request: Request): NextResponse | null {
+function readQueryToken(request: Request): string | null {
+  const url = new URL(request.url);
+  return url.searchParams.get(AUTH_QUERY_PARAM)?.trim() ?? null;
+}
+
+export function requireArcAdminToken(
+  request: Request,
+  options?: { allowQueryParam?: boolean }
+): NextResponse | null {
   const configuredToken = process.env.ARC_ADMIN_API_TOKEN;
 
   if (!configuredToken) {
@@ -25,12 +34,17 @@ export function requireArcAdminToken(request: Request): NextResponse | null {
     );
   }
 
-  const providedToken = request.headers.get(AUTH_HEADER) ?? readBearerToken(request);
+  const providedToken =
+    request.headers.get(AUTH_HEADER) ??
+    readBearerToken(request) ??
+    (options?.allowQueryParam ? readQueryToken(request) : null);
 
   if (!providedToken || providedToken !== configuredToken) {
     return NextResponse.json(
       {
-        error: `Forbidden. Provide a valid ${AUTH_HEADER} header or Bearer token.`
+        error: options?.allowQueryParam
+          ? `Forbidden. Provide a valid ${AUTH_HEADER} header, Bearer token, or ${AUTH_QUERY_PARAM} query parameter.`
+          : `Forbidden. Provide a valid ${AUTH_HEADER} header or Bearer token.`
       },
       { status: 403 }
     );
