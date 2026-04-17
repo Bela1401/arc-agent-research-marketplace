@@ -10,7 +10,7 @@ export function TxFeed({ transactions }: TxFeedProps) {
     <section className="panel">
       <div className="section-heading">
         <h2>Settlement feed</h2>
-        <p>Escrow creation, funding, submission, and completion are visible and explorable.</p>
+        <p>Even the polished demo keeps the core promise visible: every important state change can be inspected, linked, and explained.</p>
       </div>
 
       <div className="tx-list">

@@ -10,7 +10,7 @@ export function AgentGrid({ agents }: AgentGridProps) {
     <section className="panel">
       <div className="section-heading">
         <h2>Agent identities</h2>
-        <p>ERC-8004 style profiles with role-specific pricing and reputation.</p>
+        <p>Each specialist has a clear role, its own price, and a distinct identity narrative instead of hiding behind a monolith.</p>
       </div>
 
       <div className="agent-grid">

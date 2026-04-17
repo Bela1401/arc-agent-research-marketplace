@@ -1,14 +1,34 @@
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
+import { launchPresets } from "@/lib/site";
+
 const defaultDescription =
   "Analyze the top AI agent payment competitors and summarize gaps for Arc-native micropayments.";
+
+type LaunchPageProps = {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+};
 
 export const metadata = {
   title: "Launch Arc Jobs",
   description: "Browser launcher for creating new Arc ERC-8183 jobs from a URL."
 };
 
-export default function LaunchPage() {
+export default async function LaunchPage({ searchParams }: LaunchPageProps) {
+  const resolvedSearchParams = (await searchParams) ?? {};
+  const providerRoleParam = resolvedSearchParams.providerRole;
+  const descriptionParam = resolvedSearchParams.description;
+  const providerRole = Array.isArray(providerRoleParam)
+    ? providerRoleParam[0]
+    : providerRoleParam ?? "research";
+  const description = Array.isArray(descriptionParam)
+    ? descriptionParam[0]
+    : descriptionParam ?? defaultDescription;
+
   return (
     <main className="page-shell">
+      <SiteHeader />
+
       <section className="hero-panel">
         <div className="eyebrow">Browser Launcher</div>
         <h1>Run New Arc Jobs From Your Browser</h1>
@@ -55,7 +75,7 @@ export default function LaunchPage() {
 
           <label className="browser-launch-field">
             <span>Provider role</span>
-            <select defaultValue="research" name="providerRole">
+            <select defaultValue={providerRole} name="providerRole">
               <option value="research">research</option>
               <option value="factCheck">factCheck</option>
               <option value="summary">summary</option>
@@ -64,7 +84,7 @@ export default function LaunchPage() {
 
           <label className="browser-launch-field browser-launch-field--wide">
             <span>Description</span>
-            <textarea defaultValue={defaultDescription} name="description" rows={4} />
+            <textarea defaultValue={description} name="description" rows={4} />
           </label>
 
           <input name="format" type="hidden" value="html" />
@@ -81,6 +101,37 @@ export default function LaunchPage() {
       </section>
 
       <section className="panel">
+        <div className="section-heading">
+          <h2>Quick launch presets</h2>
+          <p>Use these buttons when you want a cleaner on-stage flow without rewriting prompts every time.</p>
+        </div>
+
+        <div className="command-grid">
+          {launchPresets.map((preset) => (
+            <article className="command-card" key={preset.role}>
+              <span className="eyebrow">{preset.role}</span>
+              <h3>{preset.title}</h3>
+              <p>{preset.description}</p>
+              <div className="command-card__actions">
+                <a
+                  className="button button--primary"
+                  href={`/launch?providerRole=${encodeURIComponent(preset.role)}&description=${encodeURIComponent(preset.description)}`}
+                >
+                  Prefill launcher
+                </a>
+                <a
+                  className="button button--ghost"
+                  href={`/launch?providerRole=${encodeURIComponent(preset.role)}&description=${encodeURIComponent(preset.description)}#direct-url`}
+                >
+                  View direct URL
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="panel" id="direct-url">
         <div className="section-heading">
           <h2>Direct URL pattern</h2>
           <p>
@@ -108,6 +159,8 @@ export default function LaunchPage() {
           </div>
         </div>
       </section>
+
+      <SiteFooter />
     </main>
   );
 }

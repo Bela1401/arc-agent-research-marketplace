@@ -15,7 +15,7 @@ export function TaskBoard({ tasks, agents }: TaskBoardProps) {
     <section className="panel">
       <div className="section-heading">
         <h2>Microtask board</h2>
-        <p>Each research step becomes a separately priced unit of machine-to-machine work.</p>
+        <p>The product story stays simple: break work apart, route it to specialists, and settle each step independently.</p>
       </div>
 
       <div className="task-list">

@@ -10,7 +10,7 @@ export function EconomicsPanel({ economics }: EconomicsPanelProps) {
     <section className="panel">
       <div className="section-heading">
         <h2>Unit economics</h2>
-        <p>This is the panel judges should understand in under 10 seconds.</p>
+        <p>Fast enough for judges, concrete enough for operators, and cheap enough for the business model.</p>
       </div>
 
       <div className="economics-grid">
