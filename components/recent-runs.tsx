@@ -3,6 +3,7 @@ import type { RecentArcRun, RecentRunsSummary } from "@/lib/live-marketplace";
 
 interface RecentRunsProps {
   summary: RecentRunsSummary;
+  focusJobId?: string;
 }
 
 interface ParsedDescription {
@@ -89,7 +90,7 @@ function parseDescription(description: string, run: RecentArcRun): ParsedDescrip
   };
 }
 
-export function RecentRuns({ summary }: RecentRunsProps) {
+export function RecentRuns({ summary, focusJobId }: RecentRunsProps) {
   return (
     <section className="panel panel--highlight" id="recent">
       <div className="section-heading">
@@ -127,12 +128,13 @@ export function RecentRuns({ summary }: RecentRunsProps) {
       <div className="recent-run-grid">
         {summary.runs.map((run) => {
           const parsedDescription = parseDescription(run.description, run);
+          const isFocused = focusJobId === run.jobId;
 
           return (
-            <article className="recent-run-card" key={run.jobId}>
+            <article className={`recent-run-card ${isFocused ? "recent-run-card--focused" : ""}`} key={run.jobId}>
               <div className="recent-run-card__top">
                 <div>
-                  <span className="eyebrow">{run.providerLabel}</span>
+                  <span className="eyebrow">{isFocused ? "Latest demo run" : run.providerLabel}</span>
                   <h3>Job #{run.jobId}</h3>
                 </div>
                 <div className="recent-run-card__status">

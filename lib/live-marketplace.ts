@@ -1,4 +1,4 @@
-import { formatUnits, getContract } from "viem";
+import { decodeFunctionData, formatUnits, getContract } from "viem";
 import {
   ARC_CONTRACTS,
   agenticCommerceAbi,
@@ -18,6 +18,29 @@ type Hex = `0x${string}`;
 const RECENT_RUN_LIMIT = 6;
 const RECENT_BLOCK_WINDOW = 120_000n;
 const LOG_RANGE_STEP = 9_500n;
+const JOB_LIFECYCLE_SCAN_WINDOW = 40n;
+
+const usdcApproveAbi = [
+  {
+    type: "function",
+    name: "approve",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "spender", type: "address" },
+      { name: "amount", type: "uint256" }
+    ],
+    outputs: [{ name: "", type: "bool" }]
+  }
+] as const;
+
+const lifecycleLabelOrder = {
+  "Create job": 0,
+  "Set budget": 1,
+  "Approve USDC": 2,
+  "Fund job": 3,
+  "Submit deliverable": 4,
+  "Complete settlement": 5
+} as const;
 
 const providerCatalog = {
   research: {
@@ -85,6 +108,7 @@ export interface RecentArcRun {
   createTxExplorerUrl: string;
   txTrail: RecentRunTxLink[];
   trailCoverageLabel: string;
+  visibleLifecycleCount: number;
 }
 
 export interface RecentRunsSummary {
@@ -235,7 +259,7 @@ function buildRoleMap() {
 
 function buildMetrics(runs: RecentArcRun[]): RecentRunsSummary["metrics"] {
   const totalBudgetUsd = runs.reduce((sum, run) => sum + run.budgetUsd, 0);
-  const txLinksVisible = runs.reduce((sum, run) => sum + run.txTrail.length, 0);
+  const txLinksVisible = runs.reduce((sum, run) => sum + run.visibleLifecycleCount, 0);
   const latestCreatedAtLabel = runs[0]?.createdAtLabel ?? "No live jobs yet";
 
   return {
@@ -245,6 +269,131 @@ function buildMetrics(runs: RecentArcRun[]): RecentRunsSummary["metrics"] {
     latestCreatedAtLabel,
     totalBudgetUsd
   };
+}
+
+async function getBlockWithTransactions(
+  publicClient: ReturnType<typeof getArcPublicClient>,
+  blockNumber: bigint,
+  blockCache: Map<bigint, any>
+) {
+  const cached = blockCache.get(blockNumber);
+
+  if (cached) {
+    return cached;
+  }
+
+  const block = await publicClient.getBlock({
+    blockNumber,
+    includeTransactions: true
+  });
+  blockCache.set(blockNumber, block);
+  return block;
+}
+
+async function discoverLifecycleTrail(params: {
+  publicClient: ReturnType<typeof getArcPublicClient>;
+  blockCache: Map<bigint, any>;
+  createTxHash: Hex;
+  createBlockNumber: bigint;
+  latestBlockNumber: bigint;
+  jobId: string;
+  clientWallet: Address;
+  budgetBaseUnits: bigint;
+}) {
+  const discovered = new Map<string, RecentRunTxLink>();
+
+  discovered.set(params.createTxHash, {
+    label: "Create job",
+    hash: params.createTxHash,
+    explorerUrl: buildExplorerUrl(params.createTxHash)
+  });
+
+  const finalBlockNumber =
+    params.createBlockNumber + JOB_LIFECYCLE_SCAN_WINDOW < params.latestBlockNumber
+      ? params.createBlockNumber + JOB_LIFECYCLE_SCAN_WINDOW
+      : params.latestBlockNumber;
+
+  for (let blockNumber = params.createBlockNumber; blockNumber <= finalBlockNumber; blockNumber += 1n) {
+    const block = await getBlockWithTransactions(params.publicClient, blockNumber, params.blockCache);
+
+    for (const transaction of block.transactions) {
+      if (typeof transaction === "string" || !transaction.to || !transaction.input) {
+        continue;
+      }
+
+      const targetAddress = normalizeAddress(transaction.to);
+
+      if (targetAddress === normalizeAddress(ARC_CONTRACTS.agenticCommerce)) {
+        try {
+          const decoded = decodeFunctionData({
+            abi: agenticCommerceAbi,
+            data: transaction.input
+          });
+
+          if (
+            (decoded.functionName === "setBudget" ||
+              decoded.functionName === "fund" ||
+              decoded.functionName === "submit" ||
+              decoded.functionName === "complete") &&
+            decoded.args[0]?.toString() === params.jobId
+          ) {
+            const labelMap = {
+              setBudget: "Set budget",
+              fund: "Fund job",
+              submit: "Submit deliverable",
+              complete: "Complete settlement"
+            } as const;
+            const lifecycleFunctionName = decoded.functionName as keyof typeof labelMap;
+
+            discovered.set(transaction.hash, {
+              label: labelMap[lifecycleFunctionName],
+              hash: transaction.hash,
+              explorerUrl: buildExplorerUrl(transaction.hash)
+            });
+          }
+        } catch {
+          continue;
+        }
+      }
+
+      if (
+        targetAddress === normalizeAddress(ARC_CONTRACTS.usdc) &&
+        normalizeAddress(transaction.from) === normalizeAddress(params.clientWallet)
+      ) {
+        try {
+          const decoded = decodeFunctionData({
+            abi: usdcApproveAbi,
+            data: transaction.input
+          });
+
+          if (
+            decoded.functionName === "approve" &&
+            normalizeAddress(decoded.args[0]) === normalizeAddress(ARC_CONTRACTS.agenticCommerce) &&
+            decoded.args[1] === params.budgetBaseUnits
+          ) {
+            discovered.set(transaction.hash, {
+              label: "Approve USDC",
+              hash: transaction.hash,
+              explorerUrl: buildExplorerUrl(transaction.hash)
+            });
+          }
+        } catch {
+          continue;
+        }
+      }
+    }
+  }
+
+  return [...discovered.values()].sort((left, right) => {
+    const leftOrder = lifecycleLabelOrder[left.label as keyof typeof lifecycleLabelOrder] ?? 999;
+    const rightOrder = lifecycleLabelOrder[right.label as keyof typeof lifecycleLabelOrder] ?? 999;
+
+    if (leftOrder !== rightOrder) {
+      return leftOrder - rightOrder;
+    }
+
+    return left.hash.localeCompare(right.hash);
+  });
 }
 
 function buildFallbackRecentRuns(limit = RECENT_RUN_LIMIT): RecentRunsSummary {
@@ -272,7 +421,8 @@ function buildFallbackRecentRuns(limit = RECENT_RUN_LIMIT): RecentRunsSummary {
       createTxHash: job.transactions[0]?.hash ?? "0x",
       createTxExplorerUrl: job.transactions[0]?.explorerUrl ?? buildExplorerUrl(job.transactions[0]?.hash ?? "0x"),
       txTrail: job.transactions,
-      trailCoverageLabel: "Archived full tx trail"
+      trailCoverageLabel: "Archived full tx trail",
+      visibleLifecycleCount: job.transactions.length
     }));
 
   return {
@@ -378,6 +528,7 @@ export async function getRecentArcRuns(limit = RECENT_RUN_LIMIT): Promise<Recent
   recentLogs.length = Math.min(recentLogs.length, limit);
   const knownTrailMap = buildKnownTrailMap();
   const roleMap = buildRoleMap();
+  const blockCache = new Map<bigint, any>();
   const contract = getContract({
     address: ARC_CONTRACTS.agenticCommerce,
     abi: agenticCommerceAbi,
@@ -397,13 +548,16 @@ export async function getRecentArcRuns(limit = RECENT_RUN_LIMIT): Promise<Recent
       const jobId = log.args.jobId.toString();
       const txTrail =
         knownTrailMap.get(jobId) ??
-        [
-          {
-            label: "Create job",
-            hash: log.transactionHash,
-            explorerUrl: buildExplorerUrl(log.transactionHash)
-          }
-        ];
+        (await discoverLifecycleTrail({
+          publicClient,
+          blockCache,
+          createTxHash: log.transactionHash,
+          createBlockNumber: log.blockNumber,
+          latestBlockNumber: latestBlock,
+          jobId,
+          clientWallet,
+          budgetBaseUnits: job.budget
+        }));
 
       return {
         jobId,
@@ -428,7 +582,10 @@ export async function getRecentArcRuns(limit = RECENT_RUN_LIMIT): Promise<Recent
         createTxExplorerUrl: buildExplorerUrl(log.transactionHash),
         txTrail,
         trailCoverageLabel:
-          knownTrailMap.has(jobId) ? "Full tx trail captured" : "Creation tx discovered live"
+          txTrail.length > 1
+            ? `Lifecycle trail recovered live (${txTrail.length} tx)`
+            : "Creation tx discovered live",
+        visibleLifecycleCount: txTrail.length
       } satisfies RecentArcRun;
     })
   );

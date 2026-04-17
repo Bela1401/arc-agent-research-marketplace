@@ -18,7 +18,14 @@ import {
 
 export const dynamic = "force-dynamic";
 
-export default async function HomePage() {
+type HomePageProps = {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+};
+
+export default async function HomePage({ searchParams }: HomePageProps) {
+  const resolvedSearchParams = (await searchParams) ?? {};
+  const focusJobParam = resolvedSearchParams.focusJob;
+  const focusJobId = Array.isArray(focusJobParam) ? focusJobParam[0] : focusJobParam;
   const recentRuns = await getRecentRunsSummary();
   const [premiumReportSummary, marginSeed] = await Promise.all([
     getPremiumReportSummary(recentRuns),
@@ -36,7 +43,7 @@ export default async function HomePage() {
         txLinksVisible={recentRuns.metrics.txLinksVisible}
       />
       <CommandCenter />
-      <RecentRuns summary={recentRuns} />
+      <RecentRuns focusJobId={focusJobId} summary={recentRuns} />
       <div className="split-layout">
         <PremiumAccessPanel summary={premiumReportSummary} />
         <MarginCalculator seed={marginSeed} />

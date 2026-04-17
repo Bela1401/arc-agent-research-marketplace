@@ -734,6 +734,11 @@ code {
   border-color: var(--line-strong);
 }
 
+.recent-run-card--focused {
+  border-color: rgba(66, 232, 170, 0.42);
+  box-shadow: 0 0 0 1px rgba(66, 232, 170, 0.18);
+}
+
 .recent-run-card__top,
 .recent-run-card__status {
   display: flex;
@@ -922,6 +927,12 @@ code {
   gap: 1rem;
 }
 
+.judge-autopilot,
+.judge-autopilot__actions {
+  display: flex;
+  gap: 1rem;
+}
+
 .judge-toolbar {
   position: relative;
   z-index: 1;
@@ -929,6 +940,36 @@ code {
   justify-content: space-between;
   flex-wrap: wrap;
   margin-bottom: 1rem;
+}
+
+.judge-autopilot {
+  position: relative;
+  z-index: 1;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: rgba(10, 23, 37, 0.74);
+}
+
+.judge-autopilot h3 {
+  margin: 0.6rem 0 0.35rem;
+  font-size: 1.25rem;
+  letter-spacing: -0.04em;
+}
+
+.judge-autopilot p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.judge-autopilot__actions {
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .judge-toggle {
