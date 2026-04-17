@@ -5,7 +5,7 @@ import {
 } from "@circle-fin/developer-controlled-wallets";
 import { createPublicClient, http } from "viem";
 import { ARC_BLOCKCHAIN, ARC_CONTRACTS, arcTestnet, buildExplorerUrl } from "@/lib/arc";
-import { getServerHackathonEnv } from "@/lib/hackathon-env";
+import { getArcRpcUrl, getServerHackathonEnv } from "@/lib/hackathon-env";
 
 type Address = `0x${string}`;
 type Hex = `0x${string}`;
@@ -31,11 +31,9 @@ export function getCircleClient(): CircleDeveloperControlledWalletsClient {
 }
 
 export function getArcPublicClient() {
-  const env = getServerHackathonEnv();
-
   return createPublicClient({
     chain: arcTestnet as never,
-    transport: http(env.NEXT_PUBLIC_ARC_RPC_URL)
+    transport: http(getArcRpcUrl())
   });
 }
 

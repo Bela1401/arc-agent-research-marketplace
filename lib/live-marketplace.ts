@@ -8,6 +8,7 @@ import {
   pricingModel
 } from "@/lib/arc";
 import { getArcPublicClient } from "@/lib/circle";
+import { getOptionalAddress } from "@/lib/hackathon-env";
 import { liveArcProof } from "@/lib/live-proof";
 import { getConfiguredIntegrationStatus, type MarketplaceProviderRole } from "@/lib/marketplace-integration";
 
@@ -16,6 +17,7 @@ type Hex = `0x${string}`;
 
 const RECENT_RUN_LIMIT = 6;
 const RECENT_BLOCK_WINDOW = 120_000n;
+const LOG_RANGE_STEP = 9_500n;
 
 const providerCatalog = {
   research: {
@@ -348,14 +350,30 @@ export async function getRecentArcRuns(limit = RECENT_RUN_LIMIT): Promise<Recent
     throw new Error("JobCreated event is missing from the Arc ABI.");
   }
 
-  const logs = await publicClient.getLogs({
-    address: ARC_CONTRACTS.agenticCommerce,
-    event: jobCreatedEvent,
-    fromBlock,
-    toBlock: latestBlock
-  });
+  const recentLogs = [];
+  let currentToBlock = latestBlock;
 
-  const recentLogs = [...logs].reverse().slice(0, limit);
+  while (currentToBlock >= fromBlock && recentLogs.length < limit) {
+    const currentFromBlock =
+      currentToBlock > LOG_RANGE_STEP ? currentToBlock - LOG_RANGE_STEP : 0n;
+
+    const logs = await publicClient.getLogs({
+      address: ARC_CONTRACTS.agenticCommerce,
+      event: jobCreatedEvent,
+      fromBlock: currentFromBlock < fromBlock ? fromBlock : currentFromBlock,
+      toBlock: currentToBlock
+    });
+
+    recentLogs.push(...[...logs].reverse());
+
+    if (currentFromBlock <= fromBlock) {
+      break;
+    }
+
+    currentToBlock = currentFromBlock - 1n;
+  }
+
+  recentLogs.length = Math.min(recentLogs.length, limit);
   const knownTrailMap = buildKnownTrailMap();
   const roleMap = buildRoleMap();
   const contract = getContract({
@@ -436,9 +454,9 @@ export async function getPremiumReportSummary(
 
   return {
     unlockPriceUsd: envPrice,
-    sellerAddress: (process.env.ARC_REPORT_SELLER_ADDRESS as Address | undefined) ?? seller.walletAddress,
+    sellerAddress: getOptionalAddress(process.env.ARC_REPORT_SELLER_ADDRESS) ?? seller.walletAddress,
     sellerExplorerUrl: buildExplorerAddressUrl(
-      (process.env.ARC_REPORT_SELLER_ADDRESS as Address | undefined) ?? seller.walletAddress
+      getOptionalAddress(process.env.ARC_REPORT_SELLER_ADDRESS) ?? seller.walletAddress
     ),
     paymentRail: "x402 + Circle Gateway batching on Arc Testnet",
     endpointPath: "/api/reports/premium",

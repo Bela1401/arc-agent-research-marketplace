@@ -1,5 +1,5 @@
 import { getCircleClient } from "@/lib/circle";
-import { getServerHackathonEnv } from "@/lib/hackathon-env";
+import { getOptionalAddress, getServerHackathonEnv } from "@/lib/hackathon-env";
 import { registerArcAgent, type RegisterArcAgentResult } from "@/lib/erc8004";
 import { runErc8183Job, type RunErc8183JobResult } from "@/lib/erc8183";
 
@@ -33,22 +33,27 @@ const providerRoleConfig: Record<
 
 export function getConfiguredIntegrationStatus() {
   const env = process.env;
+  const validatorWalletAddress = getOptionalAddress(env.ARC_VALIDATOR_WALLET_ADDRESS);
+  const clientWalletAddress = getOptionalAddress(env.ARC_CLIENT_WALLET_ADDRESS);
+  const researchWalletAddress = getOptionalAddress(env.ARC_RESEARCH_WALLET_ADDRESS);
+  const factCheckWalletAddress = getOptionalAddress(env.ARC_FACT_CHECK_WALLET_ADDRESS);
+  const summaryWalletAddress = getOptionalAddress(env.ARC_SUMMARY_WALLET_ADDRESS);
 
   return {
     walletSetName: env.ARC_WALLET_SET_NAME ?? "Arc Hackathon Wallets",
-    validatorWalletAddress: env.ARC_VALIDATOR_WALLET_ADDRESS ?? null,
-    clientWalletAddress: env.ARC_CLIENT_WALLET_ADDRESS ?? null,
-    researchWalletAddress: env.ARC_RESEARCH_WALLET_ADDRESS ?? null,
-    factCheckWalletAddress: env.ARC_FACT_CHECK_WALLET_ADDRESS ?? null,
-    summaryWalletAddress: env.ARC_SUMMARY_WALLET_ADDRESS ?? null,
+    validatorWalletAddress: validatorWalletAddress ?? null,
+    clientWalletAddress: clientWalletAddress ?? null,
+    researchWalletAddress: researchWalletAddress ?? null,
+    factCheckWalletAddress: factCheckWalletAddress ?? null,
+    summaryWalletAddress: summaryWalletAddress ?? null,
     jobBudgetUsd: env.ARC_JOB_BUDGET_USDC ? Number(env.ARC_JOB_BUDGET_USDC) : 0.008,
     providerStarterBalanceUsd: env.ARC_PROVIDER_STARTER_BALANCE_USDC
       ? Number(env.ARC_PROVIDER_STARTER_BALANCE_USDC)
       : 0.05,
     readyForAgentRegistration:
-      Boolean(env.ARC_VALIDATOR_WALLET_ADDRESS) &&
-      Boolean(env.ARC_RESEARCH_WALLET_ADDRESS || env.ARC_FACT_CHECK_WALLET_ADDRESS || env.ARC_SUMMARY_WALLET_ADDRESS),
-    readyForJobExecution: Boolean(env.ARC_CLIENT_WALLET_ADDRESS)
+      Boolean(validatorWalletAddress) &&
+      Boolean(researchWalletAddress || factCheckWalletAddress || summaryWalletAddress),
+    readyForJobExecution: Boolean(clientWalletAddress)
   };
 }
 
