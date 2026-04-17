@@ -1,6 +1,36 @@
 import { siteConfig } from "@/lib/site";
 
-export function SiteHeader() {
+interface SiteHeaderProps {
+  navItems?: Array<{ href: string; label: string }>;
+  primaryAction?: { href: string; label: string; newTab?: boolean };
+  secondaryAction?: { href: string; label: string; newTab?: boolean };
+}
+
+const defaultNavItems = [
+  { href: "#command", label: "Command Center" },
+  { href: "#recent", label: "Recent Runs" },
+  { href: "#premium", label: "Premium" },
+  { href: "#margin", label: "Economics" },
+  { href: "#stack", label: "Stack" }
+] as const;
+
+const defaultSecondaryAction = {
+  href: "/api/arc/status",
+  label: "API status",
+  newTab: true
+} as const;
+
+const defaultPrimaryAction = {
+  href: "/launch",
+  label: "Open launcher",
+  newTab: false
+} as const;
+
+export function SiteHeader({
+  navItems = [...defaultNavItems],
+  primaryAction = defaultPrimaryAction,
+  secondaryAction = defaultSecondaryAction
+}: SiteHeaderProps) {
   return (
     <header className="site-header">
       <a className="site-brand" href="/">
@@ -12,19 +42,29 @@ export function SiteHeader() {
       </a>
 
       <nav className="site-nav" aria-label="Primary">
-        <a href="#command">Command Center</a>
-        <a href="#recent">Recent Runs</a>
-        <a href="#premium">Premium</a>
-        <a href="#margin">Economics</a>
-        <a href="#stack">Stack</a>
+        {navItems.map((item) => (
+          <a href={item.href} key={item.href}>
+            {item.label}
+          </a>
+        ))}
       </nav>
 
       <div className="site-actions">
-        <a className="button button--ghost" href="/api/arc/status" target="_blank" rel="noreferrer">
-          API status
+        <a
+          className="button button--ghost"
+          href={secondaryAction.href}
+          rel={secondaryAction.newTab ? "noreferrer" : undefined}
+          target={secondaryAction.newTab ? "_blank" : undefined}
+        >
+          {secondaryAction.label}
         </a>
-        <a className="button button--primary" href="/launch">
-          Open launcher
+        <a
+          className="button button--primary"
+          href={primaryAction.href}
+          rel={primaryAction.newTab ? "noreferrer" : undefined}
+          target={primaryAction.newTab ? "_blank" : undefined}
+        >
+          {primaryAction.label}
         </a>
       </div>
     </header>

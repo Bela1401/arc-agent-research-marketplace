@@ -913,6 +913,86 @@ code {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.judge-toolbar,
+.judge-toggle,
+.judge-script-grid,
+.judge-step-card__top,
+.judge-step-card__actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.judge-toolbar {
+  position: relative;
+  z-index: 1;
+  align-items: end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.judge-toggle {
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.judge-script-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.judge-step-card {
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: rgba(10, 21, 33, 0.78);
+  transition: transform 180ms ease, border-color 180ms ease;
+}
+
+.judge-step-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--line-strong);
+}
+
+.judge-step-card__top {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.judge-step-card__top strong {
+  color: var(--warning);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.9rem;
+}
+
+.judge-step-card h3 {
+  margin: 0.9rem 0 0.5rem;
+  font-size: 1.22rem;
+  letter-spacing: -0.04em;
+}
+
+.judge-step-card p,
+.judge-step-card__helper {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.judge-step-card__helper {
+  margin-top: 0.9rem;
+  padding: 0.85rem 0.95rem;
+  border-radius: 16px;
+  background: rgba(66, 232, 170, 0.08);
+}
+
+.judge-step-card__actions {
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
 .browser-launch-form {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1051,6 +1131,7 @@ code {
   .recent-run-grid,
   .premium-grid,
   .premium-highlights,
+  .judge-script-grid,
   .calculator-output-grid,
   .project-brief,
   .project-brief--stack,
@@ -1093,6 +1174,7 @@ code {
   .recent-run-grid,
   .premium-grid,
   .premium-highlights,
+  .judge-script-grid,
   .calculator-layout,
   .calculator-output-grid,
   .project-brief,

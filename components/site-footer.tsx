@@ -11,6 +11,7 @@ export function SiteFooter() {
         </p>
       </div>
       <div className="site-footer__links">
+        <a href="/judges">Judge mode</a>
         <a href="/launch">Launcher</a>
         <a href="/api/reports/premium" target="_blank" rel="noreferrer">
           Premium paywall
