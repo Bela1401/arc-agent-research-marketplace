@@ -46,6 +46,9 @@ export default async function JudgesPage() {
               <a className="button button--ghost" href="/#recent">
                 Open live homepage feed
               </a>
+              <a className="button button--ghost" href="/submission">
+                Open submission kit
+              </a>
             </div>
 
             <div className="hero-trust">
@@ -206,6 +209,17 @@ export default async function JudgesPage() {
               </a>
               <a className="button button--ghost" href={siteConfig.githubUrl} target="_blank" rel="noreferrer">
                 Open GitHub
+              </a>
+            </div>
+          </article>
+
+          <article className="command-card">
+            <span className="eyebrow">Submission</span>
+            <h3>Copy-ready hackathon pack</h3>
+            <p>Short description, long description, video order, and checklist are bundled on one page.</p>
+            <div className="command-card__actions">
+              <a className="button button--primary" href="/submission">
+                Open submission kit
               </a>
             </div>
           </article>

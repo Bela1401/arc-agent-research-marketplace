@@ -1120,6 +1120,90 @@ code {
   overflow-x: auto;
 }
 
+.submission-grid,
+.submission-copy-grid,
+.timeline-grid,
+.submission-checklist {
+  display: grid;
+  gap: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.submission-grid,
+.timeline-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.submission-copy-grid,
+.submission-checklist {
+  grid-template-columns: 1fr;
+}
+
+.submission-card,
+.copy-block,
+.timeline-card,
+.check-item {
+  padding: 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: rgba(10, 21, 33, 0.78);
+}
+
+.submission-card h3,
+.copy-block h3,
+.timeline-card h3,
+.check-item strong {
+  margin: 0.55rem 0 0.45rem;
+  font-size: 1.18rem;
+  letter-spacing: -0.04em;
+}
+
+.submission-card p,
+.copy-block p,
+.timeline-card p,
+.check-item p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.copy-block__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.copy-block__body {
+  margin: 1rem 0 0;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(6, 15, 24, 0.82);
+  color: var(--text);
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.7;
+  font-size: 0.92rem;
+}
+
+.timeline-card {
+  display: grid;
+  gap: 0.95rem;
+}
+
+.timeline-card__time {
+  color: var(--warning);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.9rem;
+}
+
+.check-item {
+  display: grid;
+  gap: 0.45rem;
+}
+
 .site-footer {
   display: flex;
   justify-content: space-between;
@@ -1173,6 +1257,8 @@ code {
   .premium-grid,
   .premium-highlights,
   .judge-script-grid,
+  .submission-grid,
+  .timeline-grid,
   .calculator-output-grid,
   .project-brief,
   .project-brief--stack,
@@ -1216,6 +1302,8 @@ code {
   .premium-grid,
   .premium-highlights,
   .judge-script-grid,
+  .submission-grid,
+  .timeline-grid,
   .calculator-layout,
   .calculator-output-grid,
   .project-brief,
@@ -1223,6 +1311,11 @@ code {
   .proof-stat-grid,
   .browser-launch-form {
     grid-template-columns: 1fr;
+  }
+
+  .copy-block__header {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .hero-panel h1 {

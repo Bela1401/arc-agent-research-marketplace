@@ -12,6 +12,7 @@ export function SiteFooter() {
       </div>
       <div className="site-footer__links">
         <a href="/judges">Judge mode</a>
+        <a href="/submission">Submission kit</a>
         <a href="/launch">Launcher</a>
         <a href="/api/reports/premium" target="_blank" rel="noreferrer">
           Premium paywall

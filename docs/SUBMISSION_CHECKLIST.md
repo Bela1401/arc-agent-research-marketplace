@@ -1,10 +1,17 @@
 # Submission Checklist
 
-- [x] Project name and one-line summary are clear
-- [x] Explorer links are visible in the live proof panel
-- [x] Pricing per action is shown and stays under `$0.01`
-- [x] Arc and Circle products are listed explicitly
-- [x] README contains setup, architecture, and real run notes
-- [x] Three live jobs are already completed on Arc
-- [ ] Record the final demo video with the live proof section on screen
-- [ ] Add a few more repeated job runs if you want to push comfortably past the `50+` transaction judging target
+- [x] Project title is clear
+- [x] Short description is prepared
+- [x] Long description includes track, product story, and Circle Product Feedback
+- [x] Public GitHub repository is ready
+- [x] Live application URL is ready
+- [x] Pricing per action is shown and stays under `<= $0.01`
+- [x] Recent real Arc jobs and tx links are visible on the homepage
+- [x] Premium x402 monetization layer is visible
+- [x] Margin explanation exists on the site
+- [x] Submission helper page exists at `/submission`
+- [ ] Record the final video presentation
+- [ ] In the video, show a Circle Developer Console transaction step
+- [ ] In the video, show verification on the Arc Block Explorer
+- [ ] Attach or export a simple slide presentation if the form asks for it
+- [ ] Upload a strong homepage screenshot as the cover image

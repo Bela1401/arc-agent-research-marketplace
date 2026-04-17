@@ -2,7 +2,8 @@ export const siteConfig = {
   name: "Arc Agent Research Marketplace",
   description:
     "A polished agentic commerce demo that pays specialist AI agents in USDC on Arc and monetizes premium reports with x402.",
-  githubUrl: "https://github.com/Bela1401/arc-agent-research-marketplace"
+  githubUrl: "https://github.com/Bela1401/arc-agent-research-marketplace",
+  productionUrl: "https://arc-agent-research-marketplace.vercel.app"
 } as const;
 
 export const launchPresets = [
@@ -31,6 +32,13 @@ export const judgeNavItems = [
   { href: "#flow", label: "Live Flow" },
   { href: "#fallback", label: "Fallbacks" },
   { href: "#assets", label: "Assets" }
+] as const;
+
+export const submissionNavItems = [
+  { href: "#overview", label: "Overview" },
+  { href: "#copy", label: "Copy Pack" },
+  { href: "#video", label: "Video Flow" },
+  { href: "#checklist", label: "Checklist" }
 ] as const;
 
 export const judgeDemoSteps = [

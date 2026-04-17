@@ -1,39 +1,30 @@
 # Arc Agent Research Marketplace
 
-Hackathon repository for the `Agent-to-Agent Research Marketplace` project on Arc, now upgraded with real Circle wallet setup, real Arc agent registration, and real ERC-8183 job executions.
+Hackathon repository for the `Agent-to-Agent Research Marketplace` project on Arc, upgraded into a judge-ready product surface with live Arc runs, Circle wallet operations, browser-triggered jobs, and a premium x402 monetization layer.
 
 ## What this project demonstrates
 
 - A `Manager Agent` decomposes a research request into paid microtasks
 - `Research`, `Fact-check`, and `Summary` agents execute specialized work
 - Each task is priced in `USDC` and designed for cheap settlement on `Arc Testnet`
-- The UI highlights task progress, transaction volume, and unit economics for judges
+- The UI highlights recent live jobs, transaction volume, premium resale, and unit economics for judges
 
-## Live testnet proof
+## Live demo surfaces
 
-Successful run completed on `2026-04-16`:
+- Homepage with recent real Arc runs, tx links, budgets, timestamps, and explorer-ready proof
+- Judge mode at `/judges` with a one-click autopilot demo flow
+- Submission kit at `/submission` with copy-ready hackathon text, video order, and checklist
+- Browser launcher at `/launch` for live job creation from the UI or a direct URL
+- Premium teaser and paywall endpoints at `/api/reports/teaser` and `/api/reports/premium`
 
-- `5` Circle Developer-Controlled Wallets created for the marketplace flow
-- `3` provider agents registered on Arc
-- `3` real jobs completed on Arc via `ERC-8183`
-- `21` ERC-8183 lifecycle transactions captured across those jobs
-
-Completed jobs:
-
-- `research` job `#3437`
-- `factCheck` job `#3438`
-- `summary` job `#3439`
-
-The homepage now includes a `Live Arc proof` section with real wallet addresses, real job IDs, and explorer links from the successful run.
-
-It also includes a browser launcher at `/launch` so you can create new jobs directly from a URL during the demo.
+The current demo environment has already crossed the `50+` transaction target required by the hackathon. The homepage intentionally shows the latest visible slice of that activity instead of flooding the UI with every historical transaction.
 
 ## Why this fits the hackathon
 
 - Natural `agent-to-agent` payment loop
-- Easy to reach `50+` onchain transactions in a realistic workflow
+- Real repeated job flow that already scales into `50+` onchain transactions
 - Clear `per-action pricing <= $0.01`
-- Strong story for `Arc + USDC + agentic economy`
+- Strong story for `Arc + USDC + x402 + agentic economy`
 
 ## Quick start
 
@@ -68,17 +59,17 @@ Important:
 - the direct URL flow requires `ARC_ADMIN_API_TOKEN`
 - query-string tokens are less secure than headers and should only be used for demos/internal ops
 
-## What is real vs mocked today
+## What is real today
 
-- Real: Circle wallet bootstrapping, Arc agent registration, ERC-8183 job settlement, live proof panel
-- Mocked for presentation polish: the research brief board, sample task list, and synthetic transaction feed lower on the page
+- Real: Circle wallet bootstrapping, Arc agent registration, ERC-8183 job settlement, recent-run recovery from Arc logs, premium report teaser and paywall, and browser-triggered live job creation
+- Presentation-oriented: some explanatory panels are still crafted to help judges understand the flow quickly, but the core marketplace proof and recent-run surfaces are live-backed
 
 ## Suggested next implementation steps
 
-1. Replace the remaining mocked dashboard data in `lib/mock-data.ts` with persisted job records
-2. Store agent registration outputs and tx hashes in a database or JSON artifact
-3. Add live LLM execution for specialist reports and display the output in the UI
-4. Run repeated jobs to exceed the `50+` transaction showcase target for judging
+1. Persist completed jobs and reports into a durable store instead of deriving the UI from chain plus proof artifacts alone
+2. Add live LLM execution for specialist outputs and attach each deliverable to the premium resale flow
+3. Add richer explorer analytics and provider-level reputation history
+4. Turn the submission kit into a reusable founder-mode launch flow after the hackathon
 
 ## Repo structure
 
@@ -96,6 +87,8 @@ The repo now includes working integration-ready flows for:
 - agent registration and validation on `ERC-8004`
 - job creation and settlement on `ERC-8183`
 - token-protected mutation routes for safer cloud deployment
+- x402-compatible premium report monetization
+- recent-run recovery directly from live Arc contract logs
 
 Use these commands after filling `.env.local`:
 
@@ -116,3 +109,11 @@ Use these commands after filling `.env.local`:
 - [Submission Checklist](./docs/SUBMISSION_CHECKLIST.md)
 - [Arc Integration Guide](./docs/ARC_INTEGRATION.md)
 - [Live Run Guide](./docs/LIVE_RUN_GUIDE.md)
+
+## Submission flow
+
+For the final hackathon handoff, use:
+
+1. `/judges` for the live demo flow
+2. `/submission` for copy-ready submission text, cover-image direction, slide outline, and the video script
+3. the homepage for recent live jobs, tx links, premium access, and economics proof

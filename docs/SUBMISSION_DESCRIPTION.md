@@ -2,7 +2,11 @@
 
 ## One-line summary
 
-Agent-to-Agent Research Marketplace lets one manager agent split a user request into specialist microtasks, pay each specialist in `USDC`, and settle the full workflow on `Arc Testnet`.
+Arc Agent Research Marketplace lets one manager agent split a user request into specialist microtasks, pay each specialist in `USDC` on Arc, and resell the final report through a premium x402 unlock.
+
+## Track
+
+`Agent-to-Agent Payment Loop`
 
 ## Problem
 
@@ -25,6 +29,7 @@ We built a marketplace where:
 3. every task is individually budgeted and settled in `USDC`
 4. agent identity, validation, and reputation are written on Arc via `ERC-8004`
 5. job execution is settled on Arc via `ERC-8183`
+6. the resulting report can be previewed for free and unlocked through a premium x402-compatible paywall
 
 ## Why Arc
 
@@ -40,37 +45,62 @@ Arc gives us:
 ## Circle + Arc stack
 
 - Circle Developer-Controlled Wallets for wallet creation and signing
+- Circle Developer Console for wallet and transaction operations
 - Arc Testnet for execution
 - `ERC-8004` for agent identity, validator feedback, and validation
 - `ERC-8183` for job creation, funding, submission, and completion
+- Nanopayments / x402 for pay-per-report monetization
 - Next.js for the demo dashboard and operator tooling
 
-## Live proof completed
+## Live product proof
 
-Successful testnet run completed on `2026-04-16`:
+The shipped demo now includes:
 
-- `5` Circle wallets bootstrapped
-- `3` provider agents registered
-- `3` real marketplace jobs completed
-- `21` ERC-8183 lifecycle transactions proved across those jobs
+- a homepage with recent live Arc jobs and explorer links
+- a browser launcher for new jobs
+- judge mode with one-click autoplay demo
+- a premium teaser and paywall layer for report resale
+- economics UI that explains why the model breaks on traditional gas-heavy rails
 
-Completed jobs:
-
-- `research` job `#3437`
-- `factCheck` job `#3438`
-- `summary` job `#3439`
-
-Average job budget in the live run: `0.008 USDC`
+The environment has already crossed the `50+` transaction threshold required by the hackathon. The homepage shows the latest visible portion of this onchain activity with explorer-ready tx links.
 
 ## What judges should notice
 
-- This is not just a mock frontend. The repo already contains successful live Arc runs.
-- The model is easy to scale into dozens of onchain microtransactions by repeating specialist jobs.
-- The business logic maps naturally to real agent marketplaces, bounties, and modular AI workflows.
+- This is not only a mock frontend. Judges can trigger a fresh live job from the browser and watch it land in recent runs.
+- The same workflow has both settlement logic and a monetization layer, which makes the business model much stronger.
+- The margin calculator explicitly shows why Arc is the right rail for this kind of per-action agent commerce.
+
+## Circle Product Feedback
+
+Products used:
+
+- Arc
+- USDC
+- Circle Wallets
+- Circle Developer Console
+- Nanopayments / x402-compatible premium access
+
+Why we chose them:
+
+- We needed programmable wallets, low-cost settlement, and a realistic micropayment path for agent-to-agent work.
+
+What worked well:
+
+- Circle wallet setup made the programmable signing flow possible.
+- Arc made low-value specialist jobs and premium unlocks economically believable.
+
+What could be improved:
+
+- A clearer hackathon-first setup flow for entity secret registration and wallet bootstrapping would reduce onboarding friction.
+- More official end-to-end examples combining Arc, Circle wallets, and x402 in one app would make shipping faster.
+
+Recommendations:
+
+- Publish a first-party starter that bundles browser-triggered jobs, Circle wallets, Arc settlement, and x402 resale in one reference implementation.
 
 ## Next expansion
 
 - batch multiple jobs from one client prompt
-- persist reports and metadata instead of keeping the dashboard partly mocked
+- persist reports and metadata into durable storage
 - add live LLM outputs for each specialist role
-- run enough repeated jobs to comfortably exceed the `50+` transaction showcase target
+- add richer analytics for agent reputation and job throughput
