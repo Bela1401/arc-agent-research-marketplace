@@ -71,6 +71,7 @@ export interface RecentArcRun {
   providerRole: MarketplaceProviderRole | "unknown";
   providerLabel: string;
   providerName: string;
+  providerDescriptor: string;
   providerWallet: Address;
   providerExplorerUrl: string;
   clientWallet: Address;
@@ -256,6 +257,7 @@ function buildFallbackRecentRuns(limit = RECENT_RUN_LIMIT): RecentRunsSummary {
       providerLabel:
         job.role === "factCheck" ? providerCatalog.factCheck.label : providerCatalog[job.role].label,
       providerName: job.providerName,
+      providerDescriptor: job.providerName,
       providerWallet: job.providerWallet,
       providerExplorerUrl: buildExplorerAddressUrl(job.providerWallet),
       clientWallet: (fallbackWalletMap.client ?? liveArcProof.wallets[1].address) as Address,
@@ -389,6 +391,8 @@ export async function getRecentArcRuns(limit = RECENT_RUN_LIMIT): Promise<Recent
       const providerWallet = job.provider as Address;
       const clientWallet = job.client as Address;
       const providerInfo = roleMap.get(normalizeAddress(providerWallet));
+      const isSelfRunExternalJob =
+        !providerInfo && normalizeAddress(providerWallet) === normalizeAddress(clientWallet);
       const timestamp = formatTimestamp(Number(block.timestamp));
       const jobId = log.args.jobId.toString();
       const txTrail =
@@ -404,8 +408,13 @@ export async function getRecentArcRuns(limit = RECENT_RUN_LIMIT): Promise<Recent
       return {
         jobId,
         providerRole: providerInfo?.role ?? "unknown",
-        providerLabel: providerInfo?.providerLabel ?? "Unknown provider",
-        providerName: providerInfo?.providerName ?? "Unmapped specialist",
+        providerLabel: providerInfo?.providerLabel ?? (isSelfRunExternalJob ? "Self-run external job" : "External provider"),
+        providerName: providerInfo?.providerName ?? (isSelfRunExternalJob ? "External self-funded wallet" : "External provider wallet"),
+        providerDescriptor:
+          providerInfo?.providerName ??
+          (isSelfRunExternalJob
+            ? "Provider and client are the same external wallet."
+            : "Job was created by a wallet outside the configured marketplace agents."),
         providerWallet,
         providerExplorerUrl: buildExplorerAddressUrl(providerWallet),
         clientWallet,

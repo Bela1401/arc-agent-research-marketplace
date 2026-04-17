@@ -750,6 +750,62 @@ code {
   align-items: flex-end;
 }
 
+.recent-run-card__body {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 1rem;
+}
+
+.recent-run-card__summary strong {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-size: 1.08rem;
+  letter-spacing: -0.03em;
+}
+
+.recent-run-card__summary p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.recent-run-card__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.badge--soft {
+  background: rgba(111, 193, 255, 0.1);
+  border-color: rgba(111, 193, 255, 0.16);
+  color: #8fe8ff;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.recent-run-card__raw {
+  padding: 0.85rem 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(8, 18, 30, 0.72);
+}
+
+.recent-run-card__raw summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-family: var(--font-mono), monospace;
+}
+
+.recent-run-card__raw pre {
+  margin: 0.85rem 0 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: #9aefff;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+
 .recent-run-card__meta {
   margin: 1rem 0 0;
 }
