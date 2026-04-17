@@ -13,8 +13,9 @@ export function SiteHeader() {
 
       <nav className="site-nav" aria-label="Primary">
         <a href="#command">Command Center</a>
-        <a href="#proof">Live Proof</a>
-        <a href="#flow">Flow</a>
+        <a href="#recent">Recent Runs</a>
+        <a href="#premium">Premium</a>
+        <a href="#margin">Economics</a>
         <a href="#stack">Stack</a>
       </nav>
 

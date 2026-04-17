@@ -1,54 +1,54 @@
-import { AgentGrid } from "@/components/agent-grid";
+import { AgentRegistry } from "@/components/agent-registry";
 import { CommandCenter } from "@/components/command-center";
-import { EconomicsPanel } from "@/components/economics-panel";
 import { Hero } from "@/components/hero";
 import { IntegrationReadiness } from "@/components/integration-readiness";
 import { LiveProofPanel } from "@/components/live-proof";
+import { MarginCalculator } from "@/components/margin-calculator";
 import { MarketplaceFlow } from "@/components/marketplace-flow";
+import { PremiumAccessPanel } from "@/components/premium-access";
+import { RecentRuns } from "@/components/recent-runs";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { TaskBoard } from "@/components/task-board";
-import { TxFeed } from "@/components/tx-feed";
-import { getDashboardSnapshot } from "@/lib/mock-data";
+import {
+  getAgentRegistryEntries,
+  getMarginCalculatorSeed,
+  getPremiumReportSummary,
+  getRecentRunsSummary
+} from "@/lib/live-marketplace";
 
-export default function HomePage() {
-  const snapshot = getDashboardSnapshot();
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const recentRuns = await getRecentRunsSummary();
+  const [premiumReportSummary, marginSeed] = await Promise.all([
+    getPremiumReportSummary(recentRuns),
+    getMarginCalculatorSeed(recentRuns)
+  ]);
+  const agents = getAgentRegistryEntries();
 
   return (
     <main className="page-shell">
       <SiteHeader />
-      <Hero />
+      <Hero
+        latestJobId={recentRuns.runs[0]?.jobId}
+        premiumUnlockPriceUsd={premiumReportSummary.unlockPriceUsd}
+        recentRunsCount={recentRuns.metrics.visibleRuns}
+        txLinksVisible={recentRuns.metrics.txLinksVisible}
+      />
       <CommandCenter />
-      <MarketplaceFlow />
-
-      <section className="panel panel--highlight">
-        <div className="section-heading">
-          <h2>Research brief</h2>
-          <p>The manager agent turns a single user prompt into paid specialist work.</p>
-        </div>
-        <div className="project-brief">
-          <div>
-            <span className="eyebrow">Project</span>
-            <h3>{snapshot.project.title}</h3>
-            <p>{snapshot.project.brief}</p>
-          </div>
-          <div>
-            <span className="eyebrow">Final report</span>
-            <p>{snapshot.project.finalReport}</p>
-          </div>
-        </div>
-      </section>
-
+      <RecentRuns summary={recentRuns} />
+      <div className="split-layout">
+        <PremiumAccessPanel summary={premiumReportSummary} />
+        <MarginCalculator seed={marginSeed} />
+      </div>
       <div id="proof">
         <LiveProofPanel />
       </div>
-      <div className="split-layout">
-        <EconomicsPanel economics={snapshot.economics} />
+      <MarketplaceFlow />
+      <AgentRegistry agents={agents} />
+      <div id="stack">
         <IntegrationReadiness />
       </div>
-      <AgentGrid agents={snapshot.agents} />
-      <TaskBoard tasks={snapshot.project.tasks} agents={snapshot.agents} />
-      <TxFeed transactions={snapshot.project.transactions} />
       <SiteFooter />
     </main>
   );

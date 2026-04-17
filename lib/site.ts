@@ -1,7 +1,7 @@
 export const siteConfig = {
   name: "Arc Agent Research Marketplace",
   description:
-    "A polished agentic commerce demo that pays specialist AI agents in USDC on Arc.",
+    "A polished agentic commerce demo that pays specialist AI agents in USDC on Arc and monetizes premium reports with x402.",
   githubUrl: "https://github.com/Bela1401/arc-agent-research-marketplace"
 } as const;
 

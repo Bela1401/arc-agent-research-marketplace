@@ -587,14 +587,18 @@ code {
 
 .agent-card dd,
 .task-card dd,
-.proof-meta dd {
+.proof-meta dd,
+.recent-run-card__meta dd {
   margin: 0;
   text-align: right;
+  overflow-wrap: anywhere;
 }
 
 .score {
   color: var(--warning);
   font-family: var(--font-mono), monospace;
+  font-size: 0.82rem;
+  text-align: right;
 }
 
 .task-list,
@@ -691,6 +695,166 @@ code {
 
 .proof-links a span {
   color: var(--muted);
+}
+
+.section-note {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 1rem;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.recent-run-grid,
+.premium-grid,
+.premium-highlights,
+.calculator-output-grid {
+  display: grid;
+  gap: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.recent-run-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.recent-run-card,
+.premium-card {
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: rgba(10, 21, 33, 0.78);
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.recent-run-card:hover,
+.premium-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--line-strong);
+}
+
+.recent-run-card__top,
+.recent-run-card__status {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.recent-run-card__top {
+  align-items: flex-start;
+}
+
+.recent-run-card__status {
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.recent-run-card__meta {
+  margin: 1rem 0 0;
+}
+
+.recent-run-card__meta div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.72rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.recent-run-card__meta dt {
+  color: var(--muted);
+}
+
+.recent-run-card__meta dd {
+  margin: 0;
+  text-align: right;
+}
+
+.recent-run-card__trail {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.recent-run-card__trail a {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(66, 232, 170, 0.06);
+}
+
+.recent-run-card__trail a span,
+.premium-card p {
+  color: var(--muted);
+}
+
+.premium-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.premium-highlights {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 1rem;
+}
+
+.premium-card span {
+  display: block;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+  font-family: var(--font-mono), monospace;
+}
+
+.premium-card strong {
+  display: block;
+  font-size: 1.35rem;
+  letter-spacing: -0.04em;
+}
+
+.premium-card code {
+  display: block;
+  margin-top: 0.65rem;
+  color: #9aefff;
+}
+
+.calculator-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.calculator-controls,
+.calculator-results {
+  display: grid;
+  gap: 1rem;
+}
+
+.calculator-field {
+  display: grid;
+  gap: 0.7rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: rgba(10, 23, 37, 0.72);
+}
+
+.calculator-field span {
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.calculator-field input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+.calculator-output-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .browser-launch-form {
@@ -828,6 +992,10 @@ code {
   .command-grid,
   .flow-grid,
   .agent-grid,
+  .recent-run-grid,
+  .premium-grid,
+  .premium-highlights,
+  .calculator-output-grid,
   .project-brief,
   .project-brief--stack,
   .proof-stat-grid {
@@ -866,6 +1034,11 @@ code {
   .command-grid,
   .flow-grid,
   .agent-grid,
+  .recent-run-grid,
+  .premium-grid,
+  .premium-highlights,
+  .calculator-layout,
+  .calculator-output-grid,
   .project-brief,
   .project-brief--stack,
   .proof-stat-grid,

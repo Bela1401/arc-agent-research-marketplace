@@ -12,6 +12,12 @@ export function SiteFooter() {
       </div>
       <div className="site-footer__links">
         <a href="/launch">Launcher</a>
+        <a href="/api/reports/premium" target="_blank" rel="noreferrer">
+          Premium paywall
+        </a>
+        <a href="/api/reports/teaser" target="_blank" rel="noreferrer">
+          Teaser
+        </a>
         <a href="/api/arc/status" target="_blank" rel="noreferrer">
           API status
         </a>

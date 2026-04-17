@@ -1,9 +1,20 @@
 import { hackathonTargets } from "@/lib/arc";
-import { liveArcProof } from "@/lib/live-proof";
 import { usd } from "@/lib/format";
 import { siteConfig } from "@/lib/site";
 
-export function Hero() {
+interface HeroProps {
+  recentRunsCount: number;
+  txLinksVisible: number;
+  premiumUnlockPriceUsd: number;
+  latestJobId?: string;
+}
+
+export function Hero({
+  recentRunsCount,
+  txLinksVisible,
+  premiumUnlockPriceUsd,
+  latestJobId
+}: HeroProps) {
   return (
     <section className="hero-panel">
       <div className="hero-layout">
@@ -32,6 +43,7 @@ export function Hero() {
             <span>ERC-8004 identity</span>
             <span>ERC-8183 settlement</span>
             <span>Browser launch flow</span>
+            <span>x402 premium unlocks</span>
           </div>
         </div>
 
@@ -43,31 +55,35 @@ export function Hero() {
 
           <div className="hero-stats">
             <div>
-              <span>Live jobs proved</span>
-              <strong>{liveArcProof.stats.completedJobs}</strong>
+              <span>Recent live jobs</span>
+              <strong>{recentRunsCount}</strong>
             </div>
             <div>
-              <span>ERC-8183 tx</span>
-              <strong>{liveArcProof.stats.erc8183Transactions}</strong>
+              <span>Tx links visible</span>
+              <strong>{txLinksVisible}</strong>
             </div>
             <div>
               <span>Per action target</span>
               <strong>{usd(hackathonTargets.maxPricePerActionUsd)}</strong>
             </div>
             <div>
-              <span>Settlement asset</span>
-              <strong>USDC</strong>
+              <span>Premium unlock</span>
+              <strong>{usd(premiumUnlockPriceUsd)}</strong>
             </div>
           </div>
 
           <div className="hero-console__feed">
             <div>
               <span>Latest live milestone</span>
-              <strong>Browser-triggered jobs completed on Vercel</strong>
+              <strong>
+                {latestJobId
+                  ? `Job #${latestJobId} is already visible on the homepage with live Arc proof`
+                  : "Browser-triggered jobs completed on Vercel"}
+              </strong>
             </div>
             <div>
               <span>What judges can do</span>
-              <strong>Open launcher, trigger job, inspect proof</strong>
+              <strong>Open launcher, trigger job, inspect proof, then hit the x402 premium layer</strong>
             </div>
           </div>
         </div>

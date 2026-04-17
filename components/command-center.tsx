@@ -36,17 +36,20 @@ export function CommandCenter() {
       <div className="command-footer">
         <div className="command-footer__item">
           <span className="eyebrow">For judges</span>
-          <p>The launcher makes the demo feel live, controlled, and immediately understandable.</p>
+          <p>The launcher makes the demo feel live, then the premium x402 layer shows how the report becomes inventory.</p>
         </div>
         <div className="command-footer__item">
           <span className="eyebrow">For builders</span>
           <p>
-            Need full context? The repo, docs, and API status are one click away during the pitch.
+            Need full context? The repo, API status, and monetized report endpoints are one click away during the pitch.
           </p>
         </div>
         <div className="command-footer__actions">
           <a className="button button--ghost" href={siteConfig.githubUrl} target="_blank" rel="noreferrer">
             View GitHub
+          </a>
+          <a className="button button--ghost" href="/api/reports/teaser" target="_blank" rel="noreferrer">
+            View teaser
           </a>
           <a className="button button--ghost" href="/api/arc/status" target="_blank" rel="noreferrer">
             Inspect API status

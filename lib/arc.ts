@@ -182,3 +182,7 @@ export const agenticCommerceAbi = [
 export function buildExplorerUrl(hash: string): string {
   return `${arcTestnet.blockExplorers.default.url}/tx/${hash}`;
 }
+
+export function buildExplorerAddressUrl(address: string): string {
+  return `${arcTestnet.blockExplorers.default.url}/address/${address}`;
+}

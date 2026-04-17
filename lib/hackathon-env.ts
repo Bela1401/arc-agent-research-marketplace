@@ -15,7 +15,9 @@ const serverEnvSchema = z.object({
   ARC_SUMMARY_METADATA_URI: z.string().default("ipfs://arc-agent-summary"),
   ARC_AGENT_REPUTATION_SCORE: z.coerce.number().int().min(0).max(100).default(95),
   ARC_PROVIDER_STARTER_BALANCE_USDC: z.coerce.number().positive().default(0.05),
-  ARC_JOB_BUDGET_USDC: z.coerce.number().positive().max(0.01).default(0.008)
+  ARC_JOB_BUDGET_USDC: z.coerce.number().positive().max(0.01).default(0.008),
+  ARC_REPORT_PRICE_USDC: z.coerce.number().positive().max(1).default(0.005),
+  ARC_REPORT_SELLER_ADDRESS: z.string().startsWith("0x").optional()
 });
 
 export type ServerHackathonEnv = z.infer<typeof serverEnvSchema>;
