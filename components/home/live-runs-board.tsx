@@ -1,9 +1,14 @@
+"use client";
+
 import { shortHash, usd } from "@/lib/format";
 import type { RecentArcRun, RecentRunsSummary } from "@/lib/live-marketplace";
 
-interface RecentRunsProps {
+interface LiveRunsBoardProps {
   summary: RecentRunsSummary;
   focusJobId?: string;
+  isRefreshing?: boolean;
+  lastUpdatedLabel: string;
+  onRefresh: () => void | Promise<void>;
 }
 
 interface ParsedDescription {
@@ -15,6 +20,13 @@ interface ParsedDescription {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function humanizeKey(key: string) {
+  return key
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replaceAll("_", " ")
+    .replace(/\b\w/g, (character) => character.toUpperCase());
 }
 
 function stringifyFact(value: unknown): string {
@@ -40,13 +52,6 @@ function stringifyFact(value: unknown): string {
   return "n/a";
 }
 
-function humanizeKey(key: string): string {
-  return key
-    .replace(/([a-z])([A-Z])/g, "$1 $2")
-    .replaceAll("_", " ")
-    .replace(/\b\w/g, (character) => character.toUpperCase());
-}
-
 function parseDescription(description: string, run: RecentArcRun): ParsedDescription {
   const trimmed = description.trim();
 
@@ -56,19 +61,17 @@ function parseDescription(description: string, run: RecentArcRun): ParsedDescrip
     if (isRecord(parsed)) {
       const eventType =
         typeof parsed.eventType === "string" ? parsed.eventType.replaceAll("_", " ") : null;
-      const coordinates = isRecord(parsed.coordinates)
-        ? `${parsed.coordinates.lat ?? "?"}, ${parsed.coordinates.lng ?? "?"}`
-        : null;
       const summary =
         typeof parsed.summary === "string"
           ? parsed.summary
-          : `${run.providerDescriptor} This job is being rendered from a structured onchain payload.`;
+          : `${run.providerDescriptor} The job payload was submitted as structured onchain JSON.`;
+
       const facts = Object.entries(parsed)
-        .filter(([key]) => key !== "summary" && key !== "description")
-        .slice(0, 5)
+        .filter(([key]) => !["summary", "description", "prompt"].includes(key))
+        .slice(0, 4)
         .map(([key, value]) => ({
           label: humanizeKey(key),
-          value: key === "coordinates" && coordinates ? coordinates : stringifyFact(value)
+          value: stringifyFact(value)
         }));
 
       return {
@@ -79,7 +82,7 @@ function parseDescription(description: string, run: RecentArcRun): ParsedDescrip
       };
     }
   } catch {
-    // Fall back to plain text rendering.
+    // Plain text descriptions fall through to the basic view.
   }
 
   return {
@@ -90,82 +93,91 @@ function parseDescription(description: string, run: RecentArcRun): ParsedDescrip
   };
 }
 
-export function RecentRuns({ summary, focusJobId }: RecentRunsProps) {
+export function LiveRunsBoard({
+  summary,
+  focusJobId,
+  isRefreshing,
+  lastUpdatedLabel,
+  onRefresh
+}: LiveRunsBoardProps) {
   return (
-    <section className="panel panel--highlight" id="recent">
-      <div className="section-heading">
+    <section className="surface" id="live-feed">
+      <div className="section-head">
         <div>
-          <h2>Recent Arc runs</h2>
+          <span className="pill">Live Arc Feed</span>
+          <h2>Recent jobs with visible tx trails</h2>
           <p>
-            The homepage now reads recent jobs from live Arc contract logs and keeps explorer-ready
-            proof links visible without falling back to mock rows.
+            This board reads live Arc logs, keeps explorer-ready transaction links visible, and
+            refreshes automatically so new jobs appear without a manual rebuild.
           </p>
         </div>
-        <span className="eyebrow">{summary.source === "rpc" ? "Live RPC feed" : "Proof fallback"}</span>
+
+        <div className="section-head__actions">
+          <span className="status-chip">{summary.source === "rpc" ? "Live RPC" : "Proof fallback"}</span>
+          <span className="sync-note">Updated {lastUpdatedLabel}</span>
+          <button className="button button--ghost" onClick={() => void onRefresh()} type="button">
+            {isRefreshing ? "Refreshing..." : "Refresh now"}
+          </button>
+        </div>
       </div>
 
-      <div className="proof-stat-grid">
-        <article>
+      <div className="metric-grid metric-grid--compact">
+        <article className="metric-card">
           <span>Visible jobs</span>
           <strong>{summary.metrics.visibleRuns}</strong>
         </article>
-        <article>
-          <span>Tx links visible</span>
+        <article className="metric-card">
+          <span>Tx links</span>
           <strong>{summary.metrics.txLinksVisible}</strong>
         </article>
-        <article>
-          <span>Avg budget</span>
+        <article className="metric-card">
+          <span>Average budget</span>
           <strong>{usd(summary.metrics.averageBudgetUsd)}</strong>
         </article>
-        <article>
-          <span>Latest timestamp</span>
+        <article className="metric-card">
+          <span>Latest activity</span>
           <strong>{summary.metrics.latestCreatedAtLabel}</strong>
         </article>
       </div>
 
-      <p className="section-note">{summary.note}</p>
+      <p className="surface-note">{summary.note}</p>
 
-      <div className="recent-run-grid">
+      <div className="run-grid">
         {summary.runs.map((run) => {
-          const parsedDescription = parseDescription(run.description, run);
+          const parsed = parseDescription(run.description, run);
           const isFocused = focusJobId === run.jobId;
 
           return (
-            <article className={`recent-run-card ${isFocused ? "recent-run-card--focused" : ""}`} key={run.jobId}>
-              <div className="recent-run-card__top">
+            <article className={`run-card ${isFocused ? "run-card--focused" : ""}`} key={run.jobId}>
+              <div className="run-card__top">
                 <div>
-                  <span className="eyebrow">{isFocused ? "Latest demo run" : run.providerLabel}</span>
+                  <span className="pill pill--soft">{isFocused ? "Latest demo run" : run.providerLabel}</span>
                   <h3>Job #{run.jobId}</h3>
                 </div>
-                <div className="recent-run-card__status">
-                  <span className={`status status--${run.status.toLowerCase()}`}>{run.status}</span>
+                <div className="run-card__budget">
+                  <span className={`status-chip status-chip--${run.status.toLowerCase()}`}>{run.status}</span>
                   <strong>{usd(run.budgetUsd)}</strong>
                 </div>
               </div>
 
-              <div className="recent-run-card__body">
-                <div className="recent-run-card__summary">
-                  <strong>{parsedDescription.headline}</strong>
-                  <p>{parsedDescription.summary}</p>
+              <div className="run-card__body">
+                <div className="run-card__summary">
+                  <strong>{parsed.headline}</strong>
+                  <p>{parsed.summary}</p>
                 </div>
 
-                {parsedDescription.facts.length > 0 ? (
-                  <div className="recent-run-card__facts">
-                    {parsedDescription.facts.map((fact) => (
-                      <span className="badge badge--soft" key={`${run.jobId}-${fact.label}`}>
+                {parsed.facts.length > 0 ? (
+                  <div className="run-chip-row">
+                    {parsed.facts.map((fact) => (
+                      <span className="run-chip" key={`${run.jobId}-${fact.label}`}>
                         {fact.label}: {fact.value}
                       </span>
                     ))}
                   </div>
                 ) : null}
-
-                <details className="recent-run-card__raw">
-                  <summary>Raw payload</summary>
-                  <pre>{parsedDescription.raw}</pre>
-                </details>
               </div>
 
-              <dl className="recent-run-card__meta">
+              <dl className="detail-list">
                 <div>
                   <dt>Created</dt>
                   <dd>{run.createdAtLabel}</dd>
@@ -187,19 +199,24 @@ export function RecentRuns({ summary, focusJobId }: RecentRunsProps) {
                   </dd>
                 </div>
                 <div>
-                  <dt>Trail coverage</dt>
+                  <dt>Coverage</dt>
                   <dd>{run.trailCoverageLabel}</dd>
                 </div>
               </dl>
 
-              <div className="recent-run-card__trail">
+              <div className="trail-list">
                 {run.txTrail.map((tx) => (
-                  <a href={tx.explorerUrl} key={`${run.jobId}-${tx.hash}`} rel="noreferrer" target="_blank">
+                  <a className="trail-pill" href={tx.explorerUrl} key={`${run.jobId}-${tx.hash}`} rel="noreferrer" target="_blank">
                     <span>{tx.label}</span>
                     <strong>{shortHash(tx.hash)}</strong>
                   </a>
                 ))}
               </div>
+
+              <details className="payload-box">
+                <summary>Raw payload</summary>
+                <pre>{parsed.raw}</pre>
+              </details>
             </article>
           );
         })}

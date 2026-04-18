@@ -1,6 +1,6 @@
-import { SiteFooter } from "@/components/site-footer";
-import { SiteHeader } from "@/components/site-header";
-import { launchPresets } from "@/lib/site";
+import { SiteFooter } from "@/components/layout/site-footer";
+import { SiteHeader } from "@/components/layout/site-header";
+import { buildLaunchHref, launchPresets } from "@/lib/site";
 
 const defaultDescription =
   "Analyze the top AI agent payment competitors and summarize gaps for Arc-native micropayments.";
@@ -11,7 +11,7 @@ type LaunchPageProps = {
 
 export const metadata = {
   title: "Launch Arc Jobs",
-  description: "Browser launcher for creating new Arc ERC-8183 jobs from a URL."
+  description: "Browser launcher for creating fresh Arc jobs without leaving the product."
 };
 
 export default async function LaunchPage({ searchParams }: LaunchPageProps) {
@@ -26,139 +26,152 @@ export default async function LaunchPage({ searchParams }: LaunchPageProps) {
     : descriptionParam ?? defaultDescription;
 
   return (
-    <main className="page-shell">
-      <SiteHeader />
+    <main className="app-shell">
+      <SiteHeader
+        navItems={[
+          { href: "#overview", label: "Overview" },
+          { href: "#form", label: "Run Job" },
+          { href: "#presets", label: "Presets" }
+        ]}
+        primaryAction={{ href: "/", label: "Back to dashboard" }}
+        secondaryAction={{ href: "/judges", label: "Judge mode" }}
+      />
 
-      <section className="hero-panel">
-        <div className="eyebrow">Browser Launcher</div>
-        <h1>Run New Arc Jobs From Your Browser</h1>
-        <p className="lede">
-          This page builds direct browser URLs for the live `ERC-8183` flow. Paste your admin
-          token, choose the specialist role, and open the job runner in a new tab.
-        </p>
-        <div className="hero-stats">
+      <section className="hero-surface" id="overview">
+        <div className="hero-grid">
           <div>
-            <span>Endpoint</span>
-            <strong>/api/arc/run-job</strong>
-          </div>
-          <div>
-            <span>Auth mode</span>
-            <strong>URL token</strong>
-          </div>
-          <div>
-            <span>Result format</span>
-            <strong>HTML + tx links</strong>
-          </div>
-        </div>
-      </section>
-
-      <section className="panel panel--highlight">
-        <div className="section-heading">
-          <h2>Create a job</h2>
-          <p>
-            This form submits a direct `GET` request to the live job route, so the job starts
-            immediately when the browser opens the target URL.
-          </p>
-        </div>
-
-        <form action="/api/arc/run-job" className="browser-launch-form" method="GET" target="_blank">
-          <label className="browser-launch-field">
-            <span>Admin token</span>
-            <input
-              autoComplete="off"
-              name="token"
-              placeholder="Paste ARC_ADMIN_API_TOKEN"
-              required
-              type="password"
-            />
-          </label>
-
-          <label className="browser-launch-field">
-            <span>Provider role</span>
-            <select defaultValue={providerRole} name="providerRole">
-              <option value="research">research</option>
-              <option value="factCheck">factCheck</option>
-              <option value="summary">summary</option>
-            </select>
-          </label>
-
-          <label className="browser-launch-field browser-launch-field--wide">
-            <span>Description</span>
-            <textarea defaultValue={description} name="description" rows={4} />
-          </label>
-
-          <input name="format" type="hidden" value="html" />
-
-          <div className="browser-launch-actions">
-            <button className="browser-launch-button" type="submit">
-              Run job in new tab
-            </button>
-            <a className="browser-launch-link" href="/">
-              Back to dashboard
-            </a>
-          </div>
-        </form>
-      </section>
-
-      <section className="panel">
-        <div className="section-heading">
-          <h2>Quick launch presets</h2>
-          <p>Use these buttons when you want a cleaner on-stage flow without rewriting prompts every time.</p>
-        </div>
-
-        <div className="command-grid">
-          {launchPresets.map((preset) => (
-            <article className="command-card" key={preset.role}>
-              <span className="eyebrow">{preset.role}</span>
-              <h3>{preset.title}</h3>
-              <p>{preset.description}</p>
-              <div className="command-card__actions">
-                <a
-                  className="button button--primary"
-                  href={`/launch?providerRole=${encodeURIComponent(preset.role)}&description=${encodeURIComponent(preset.description)}`}
-                >
-                  Prefill launcher
-                </a>
-                <a
-                  className="button button--ghost"
-                  href={`/launch?providerRole=${encodeURIComponent(preset.role)}&description=${encodeURIComponent(preset.description)}#direct-url`}
-                >
-                  View direct URL
-                </a>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="panel" id="direct-url">
-        <div className="section-heading">
-          <h2>Direct URL pattern</h2>
-          <p>
-            For quick demos, you can also open the endpoint directly from the browser address bar.
-          </p>
-        </div>
-
-        <div className="browser-launch-url">
-          <code>
-            /api/arc/run-job?providerRole=research&amp;description=Your+prompt&amp;token=YOUR_TOKEN&amp;format=html
-          </code>
-        </div>
-
-        <div className="project-brief">
-          <div>
-            <span className="eyebrow">Good for</span>
-            <p>Fast operator demos, one-click reruns, and sharing a launch URL inside the team.</p>
-          </div>
-          <div>
-            <span className="eyebrow">Security note</span>
-            <p>
-              Query-string tokens are less secure than headers because they can appear in browser
-              history and logs. Use this flow only for hackathon demos and rotate the token later.
+            <span className="pill">Browser Launcher</span>
+            <h1>Start fresh Arc jobs in one clean flow.</h1>
+            <p className="hero-copy">
+              Paste the admin token, choose the specialist role, and the browser opens a result page
+              with the Arc transaction trail already attached.
             </p>
+
+            <div className="hero-tags">
+              <span>No terminal required</span>
+              <span>HTML result page</span>
+              <span>Explorer links included</span>
+            </div>
           </div>
+
+          <aside className="hero-rail">
+            <div className="metric-grid metric-grid--compact">
+              <article className="metric-card">
+                <span>Endpoint</span>
+                <strong>/api/arc/run-job</strong>
+              </article>
+              <article className="metric-card">
+                <span>Auth</span>
+                <strong>Token in browser</strong>
+              </article>
+              <article className="metric-card">
+                <span>Result</span>
+                <strong>HTML + tx links</strong>
+              </article>
+              <article className="metric-card">
+                <span>Best use</span>
+                <strong>Live demo mode</strong>
+              </article>
+            </div>
+          </aside>
         </div>
       </section>
+
+      <div className="section-stack">
+        <section className="surface" id="form">
+          <div className="section-head">
+            <div>
+              <span className="pill">Run Job</span>
+              <h2>Create a live Arc run</h2>
+              <p>
+                This form submits directly to the live run route. When the new tab opens, the result
+                page will render the completed Arc job and its transaction links.
+              </p>
+            </div>
+          </div>
+
+          <form action="/api/arc/run-job" className="form-card form-card--standalone" method="GET" target="_blank">
+            <div className="field-grid">
+              <label className="field">
+                <span>Admin token</span>
+                <input
+                  autoComplete="off"
+                  name="token"
+                  placeholder="Paste ARC_ADMIN_API_TOKEN"
+                  required
+                  type="password"
+                />
+              </label>
+
+              <label className="field">
+                <span>Provider role</span>
+                <select defaultValue={providerRole} name="providerRole">
+                  <option value="research">research</option>
+                  <option value="factCheck">factCheck</option>
+                  <option value="summary">summary</option>
+                </select>
+              </label>
+
+              <label className="field field--wide">
+                <span>Description</span>
+                <textarea defaultValue={description} name="description" rows={5} />
+              </label>
+            </div>
+
+            <input name="format" type="hidden" value="html" />
+
+            <div className="link-row">
+              <button className="button button--primary" type="submit">
+                Run job in new tab
+              </button>
+              <a className="button button--ghost" href="/">
+                Back to dashboard
+              </a>
+            </div>
+          </form>
+        </section>
+
+        <section className="surface" id="presets">
+          <div className="section-head">
+            <div>
+              <span className="pill">Presets</span>
+              <h2>Cleaner on-stage prompts</h2>
+              <p>Use these when you want the launch flow to feel deliberate and consistent during the demo.</p>
+            </div>
+          </div>
+
+          <div className="launch-grid">
+            {launchPresets.map((preset) => (
+              <article className="launch-card" key={preset.role}>
+                <span className="pill pill--soft">{preset.role}</span>
+                <h3>{preset.title}</h3>
+                <p>{preset.description}</p>
+                <div className="link-row">
+                  <a className="button button--primary" href={buildLaunchHref(preset.role, preset.description)}>
+                    Prefill form
+                  </a>
+                  <a className="button button--ghost" href={`${buildLaunchHref(preset.role, preset.description)}#form`}>
+                    Review prompt
+                  </a>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="surface">
+          <div className="section-head">
+            <div>
+              <span className="pill">Security Note</span>
+              <h2>Use query-token mode only for the hackathon demo</h2>
+              <p>
+                Browser-launch URLs are convenient on stage, but query-string tokens can appear in
+                history or logs. Rotate the token after the presentation.
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
 
       <SiteFooter />
     </main>

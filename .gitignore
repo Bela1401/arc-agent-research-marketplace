@@ -12,3 +12,7 @@ recovery_file*.dat
 *.dat
 *.tsbuildinfo
 .vercel
+submission-assets/
+submission-assets-test/
+submission-assets-test-audio/
+Arc-Agent-Research-Marketplace-DemoTEMP_MPY_wvf_snd.mp4

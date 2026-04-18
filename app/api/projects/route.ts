@@ -1,19 +1,8 @@
 import { NextResponse } from "next/server";
-import {
-  getAgentRegistryEntries,
-  getMarginCalculatorSeed,
-  getPremiumReportSummary,
-  getRecentRunsSummary
-} from "@/lib/live-marketplace";
+import { getProjectSnapshot } from "@/lib/live-marketplace";
 
 export async function GET() {
-  const recentRuns = await getRecentRunsSummary();
-  const response = NextResponse.json({
-    recentRuns,
-    premium: await getPremiumReportSummary(recentRuns),
-    margin: await getMarginCalculatorSeed(recentRuns),
-    agents: getAgentRegistryEntries()
-  });
+  const response = NextResponse.json(await getProjectSnapshot());
   response.headers.set("Cache-Control", "no-store");
   return response;
 }

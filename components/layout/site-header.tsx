@@ -1,4 +1,4 @@
-import { siteConfig } from "@/lib/site";
+import { homeNavItems, siteConfig } from "@/lib/site";
 
 interface SiteHeaderProps {
   navItems?: Array<{ href: string; label: string }>;
@@ -6,42 +6,34 @@ interface SiteHeaderProps {
   secondaryAction?: { href: string; label: string; newTab?: boolean };
 }
 
-const defaultNavItems = [
-  { href: "#command", label: "Command Center" },
-  { href: "#recent", label: "Recent Runs" },
-  { href: "#premium", label: "Premium" },
-  { href: "#margin", label: "Economics" },
-  { href: "#stack", label: "Stack" }
-] as const;
-
-const defaultSecondaryAction = {
-  href: "/api/arc/status",
-  label: "API status",
-  newTab: true
-} as const;
-
 const defaultPrimaryAction = {
   href: "/launch",
   label: "Open launcher",
   newTab: false
 } as const;
 
+const defaultSecondaryAction = {
+  href: "/judges",
+  label: "Judge mode",
+  newTab: false
+} as const;
+
 export function SiteHeader({
-  navItems = [...defaultNavItems],
+  navItems = [...homeNavItems],
   primaryAction = defaultPrimaryAction,
   secondaryAction = defaultSecondaryAction
 }: SiteHeaderProps) {
   return (
-    <header className="site-header">
-      <a className="site-brand" href="/">
-        <span className="site-brand__mark">ARC</span>
+    <header className="topbar">
+      <a className="brand" href="/">
+        <span className="brand__mark">ARC</span>
         <div>
           <strong>{siteConfig.name}</strong>
-          <span>Live agentic commerce demo</span>
+          <span>Arc-native live demo with onchain proof</span>
         </div>
       </a>
 
-      <nav className="site-nav" aria-label="Primary">
+      <nav aria-label="Primary" className="topbar__nav">
         {navItems.map((item) => (
           <a href={item.href} key={item.href}>
             {item.label}
@@ -49,7 +41,7 @@ export function SiteHeader({
         ))}
       </nav>
 
-      <div className="site-actions">
+      <div className="topbar__actions">
         <a
           className="button button--ghost"
           href={secondaryAction.href}

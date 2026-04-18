@@ -202,6 +202,13 @@ export interface PremiumResearchTeaser {
   highlights: string[];
 }
 
+export interface ProjectSnapshot {
+  recentRuns: RecentRunsSummary;
+  premium: PremiumReportSummary;
+  margin: MarginCalculatorSeed;
+  agents: AgentRegistryEntry[];
+}
+
 function normalizeAddress(address: string | null | undefined): string {
   return address?.toLowerCase() ?? "";
 }
@@ -735,5 +742,18 @@ export async function buildPremiumResearchTeaser(): Promise<PremiumResearchTease
       report.marketGaps[1] ?? "Reusable agent outputs remain hard to resell cleanly.",
       report.whyArcWins[0] ?? "Arc keeps micropayment settlement economically viable."
     ]
+  };
+}
+
+export async function getProjectSnapshot(): Promise<ProjectSnapshot> {
+  const recentRuns = await getRecentRunsSummary();
+  const premium = await getPremiumReportSummary(recentRuns);
+  const margin = await getMarginCalculatorSeed(recentRuns, premium);
+
+  return {
+    recentRuns,
+    premium,
+    margin,
+    agents: getAgentRegistryEntries()
   };
 }
