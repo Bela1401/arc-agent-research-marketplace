@@ -7,8 +7,8 @@ import { judgeNavItems, siteConfig } from "@/lib/site";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Judge Demo Mode",
-  description: "A clean, presentation-ready Arc demo flow with autopilot and proof links."
+  title: "Arc Ops Judge Speedrun",
+  description: "A one-click judge path for the playable Arc mission-control demo."
 };
 
 export default async function JudgesPage() {
@@ -19,107 +19,100 @@ export default async function JudgesPage() {
     <main className="app-shell">
       <SiteHeader
         navItems={[...judgeNavItems]}
-        primaryAction={{ href: "/launch", label: "Open launcher" }}
-        secondaryAction={{ href: "/", label: "Back to dashboard" }}
+        primaryAction={{ href: "/", label: "Open Arc Ops" }}
+        secondaryAction={{ href: "/launch", label: "Manual console" }}
       />
 
-      <section className="hero-surface" id="overview">
-        <div className="hero-grid">
-          <div>
-            <span className="pill">Judge Mode</span>
-            <h1>Run the whole Arc story without narrating every click.</h1>
-            <p className="hero-copy">
-              This page is tuned for the live presentation itself: open the dashboard, launch a fresh
-              job, show the run appear in the live feed, and end on the premium report unlock.
-            </p>
+      <section className="hero-board hero-board--judge">
+        <div className="hero-board__content">
+          <span className="eyebrow">Judge Speedrun</span>
+          <h1>Show the whole Arc loop in one run.</h1>
+          <p className="hero-copy">
+            This route is built for judging: clear one live mission, open its replay trail, and end
+            on the premium vault plus proof rails.
+          </p>
 
-            <div className="link-row">
-              <a className="button button--primary" href="#script">
-                Start autopilot
-              </a>
-              <a className="button button--ghost" href="/">
-                Open dashboard
-              </a>
-              <a className="button button--ghost" href="/submission">
-                Submission kit
-              </a>
-            </div>
+          <div className="button-row">
+            <a className="button button--primary" href="#speedrun">
+              Start speedrun
+            </a>
+            <a className="button button--ghost" href="/submission">
+              Submission kit
+            </a>
           </div>
-
-          <aside className="hero-rail">
-            <div className="metric-grid metric-grid--compact">
-              <article className="metric-card">
-                <span>Recent jobs</span>
-                <strong>{snapshot.recentRuns.metrics.visibleRuns}</strong>
-              </article>
-              <article className="metric-card">
-                <span>Visible tx links</span>
-                <strong>{snapshot.recentRuns.metrics.txLinksVisible}</strong>
-              </article>
-              <article className="metric-card">
-                <span>Premium unlock</span>
-                <strong>{snapshot.premium.unlockPriceUsd.toFixed(3)} USDC</strong>
-              </article>
-              <article className="metric-card">
-                <span>Latest run</span>
-                <strong>{latestRun ? `#${latestRun.jobId}` : "n/a"}</strong>
-              </article>
-            </div>
-
-            <div className="callout">
-              <span className="pill pill--soft">Pitch framing</span>
-              <p>
-                Lead with the live feed, show one real browser-triggered run, then close on the
-                premium layer and Arc transaction proof.
-              </p>
-            </div>
-          </aside>
         </div>
+
+        <aside className="hero-hud">
+          <div className="score-grid">
+            <article className="score-card">
+              <span>Live missions</span>
+              <strong>{snapshot.recentRuns.metrics.visibleRuns}</strong>
+            </article>
+            <article className="score-card">
+              <span>Replay links</span>
+              <strong>{snapshot.recentRuns.metrics.txLinksVisible}</strong>
+            </article>
+            <article className="score-card">
+              <span>Vault key</span>
+              <strong>{snapshot.premium.unlockPriceUsd.toFixed(3)} USDC</strong>
+            </article>
+            <article className="score-card">
+              <span>Latest mission</span>
+              <strong>{latestRun ? `#${latestRun.jobId}` : "n/a"}</strong>
+            </article>
+          </div>
+        </aside>
       </section>
 
-      <div className="section-stack">
+      <div className="arena-stack">
         <DemoConsole />
 
-        <section className="surface" id="resources">
-          <div className="section-head">
+        <section className="game-panel" id="proof">
+          <div className="panel-header">
             <div>
-              <span className="pill">Resources</span>
+              <span className="eyebrow">Proof rails</span>
               <h2>Keep these tabs ready</h2>
-              <p>These are the fastest supporting surfaces to open if judges ask for more proof or product depth.</p>
+              <p>Open these if judges ask for implementation detail or verification depth.</p>
             </div>
           </div>
 
-          <div className="launch-grid">
-            <article className="launch-card">
-              <span className="pill pill--soft">Dashboard</span>
-              <h3>Live product surface</h3>
-              <p>Recent Arc jobs, tx proof, premium rail, and economics in one place.</p>
-              <div className="link-row">
+          <div className="mission-grid">
+            <article className="mission-card mission-card--static">
+              <div className="mission-card__top">
+                <span className="eyebrow eyebrow--soft">Game</span>
+              </div>
+              <h3>Arc Ops</h3>
+              <p>Live mission board with replay logs and vault access.</p>
+              <div className="button-row">
                 <a className="button button--primary" href="/">
-                  Open dashboard
+                  Open game
                 </a>
               </div>
             </article>
 
-            <article className="launch-card">
-              <span className="pill pill--soft">Premium</span>
-              <h3>Monetized report layer</h3>
-              <p>Show the public teaser first and then the protected premium unlock endpoint.</p>
-              <div className="link-row">
+            <article className="mission-card mission-card--static">
+              <div className="mission-card__top">
+                <span className="eyebrow eyebrow--soft">Vault</span>
+              </div>
+              <h3>Premium endpoints</h3>
+              <p>Show the teaser first, then the full premium unlock challenge.</p>
+              <div className="button-row">
                 <a className="button button--primary" href="/api/reports/teaser" rel="noreferrer" target="_blank">
                   Open teaser
                 </a>
                 <a className="button button--ghost" href="/api/reports/premium" rel="noreferrer" target="_blank">
-                  Open premium
+                  Open vault
                 </a>
               </div>
             </article>
 
-            <article className="launch-card">
-              <span className="pill pill--soft">Proof</span>
+            <article className="mission-card mission-card--static" id="assets">
+              <div className="mission-card__top">
+                <span className="eyebrow eyebrow--soft">Infra</span>
+              </div>
               <h3>Technical verification</h3>
-              <p>Use API status, GitHub, and explorer-linked jobs if judges want implementation detail.</p>
-              <div className="link-row">
+              <p>Use API status and GitHub if judges want to verify the stack and routes.</p>
+              <div className="button-row">
                 <a className="button button--primary" href="/api/arc/status" rel="noreferrer" target="_blank">
                   API status
                 </a>

@@ -7,14 +7,14 @@ interface SiteHeaderProps {
 }
 
 const defaultPrimaryAction = {
-  href: "/launch",
-  label: "Open launcher",
+  href: "/judges",
+  label: "Judge speedrun",
   newTab: false
 } as const;
 
 const defaultSecondaryAction = {
-  href: "/judges",
-  label: "Judge mode",
+  href: "/launch",
+  label: "Manual console",
   newTab: false
 } as const;
 
@@ -24,16 +24,16 @@ export function SiteHeader({
   secondaryAction = defaultSecondaryAction
 }: SiteHeaderProps) {
   return (
-    <header className="topbar">
-      <a className="brand" href="/">
-        <span className="brand__mark">ARC</span>
+    <header className="site-header">
+      <a className="site-header__brand" href="/">
+        <span className="site-header__mark">ARC</span>
         <div>
           <strong>{siteConfig.name}</strong>
-          <span>Arc-native live demo with onchain proof</span>
+          <span>Playable settlement game for live Arc demos</span>
         </div>
       </a>
 
-      <nav aria-label="Primary" className="topbar__nav">
+      <nav aria-label="Primary" className="site-header__nav">
         {navItems.map((item) => (
           <a href={item.href} key={item.href}>
             {item.label}
@@ -41,7 +41,7 @@ export function SiteHeader({
         ))}
       </nav>
 
-      <div className="topbar__actions">
+      <div className="site-header__actions">
         <a
           className="button button--ghost"
           href={secondaryAction.href}

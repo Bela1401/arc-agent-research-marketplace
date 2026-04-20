@@ -14,9 +14,9 @@ const monoFont = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Arc Agent Research Marketplace",
+  title: "Arc Ops",
   description:
-    "Arc-branded live demo for launching specialist jobs, showing transaction proof, and monetizing premium reports."
+    "Playable Arc mission-control demo with live jobs, visible tx proof, and a premium x402 vault."
 };
 
 export default function RootLayout({

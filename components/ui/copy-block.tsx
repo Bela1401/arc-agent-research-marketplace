@@ -27,7 +27,7 @@ export function CopyBlock({ title, eyebrow, description, value }: CopyBlockProps
     <article className="copy-block">
       <div className="copy-block__header">
         <div>
-          {eyebrow ? <span className="pill">{eyebrow}</span> : null}
+          {eyebrow ? <span className="eyebrow eyebrow--soft">{eyebrow}</span> : null}
           <h3>{title}</h3>
           <p>{description}</p>
         </div>

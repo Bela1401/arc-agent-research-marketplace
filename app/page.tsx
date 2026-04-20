@@ -1,4 +1,4 @@
-import { HomeDashboard } from "@/components/home/home-dashboard";
+import { HomeArena } from "@/components/game/home-arena";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { getProjectSnapshot } from "@/lib/live-marketplace";
@@ -18,7 +18,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   return (
     <main className="app-shell">
       <SiteHeader />
-      <HomeDashboard focusJobId={focusJobId} initialSnapshot={snapshot} />
+      <HomeArena focusJobId={focusJobId} initialSnapshot={snapshot} />
       <SiteFooter />
     </main>
   );

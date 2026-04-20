@@ -15,37 +15,37 @@ function buildRunJobHref(role: string, description: string, token: string) {
 
 export function DemoConsole() {
   const [token, setToken] = useState("");
-  const [pitchMode, setPitchMode] = useState<"fast" | "full">("fast");
+  const [mode, setMode] = useState<"fast" | "full">("fast");
   const [autopilotState, setAutopilotState] = useState<"idle" | "running" | "success" | "error">("idle");
   const [message, setMessage] = useState(
-    "Paste ARC_ADMIN_API_TOKEN to make the live run step one-click from this page."
+    "Paste ARC_ADMIN_API_TOKEN and this page will run the speedrun for you."
   );
 
   const visibleSteps = useMemo(() => {
-    if (pitchMode === "fast") {
+    if (mode === "fast") {
       return judgeDemoSteps.filter((step) =>
-        ["step-home", "step-run", "step-refresh", "step-premium"].includes(step.id)
+        ["step-home", "step-run", "step-replay", "step-vault"].includes(step.id)
       );
     }
 
     return judgeDemoSteps;
-  }, [pitchMode]);
+  }, [mode]);
 
   async function handleAutopilot() {
     if (!token.trim()) {
       setAutopilotState("error");
-      setMessage("Paste ARC_ADMIN_API_TOKEN first so this page can launch the live job automatically.");
+      setMessage("Paste ARC_ADMIN_API_TOKEN first so the speedrun can launch live.");
       return;
     }
 
     try {
       setAutopilotState("running");
-      setMessage("Submitting a live research job to Arc. Stay on this page for a few seconds.");
+      setMessage("Launching a live Sector Sweep mission on Arc. Stay here for a moment.");
 
       const runStep = judgeDemoSteps.find((step) => step.id === "step-run");
 
       if (!runStep || !("role" in runStep)) {
-        throw new Error("The live run step is not configured correctly.");
+        throw new Error("The speedrun mission is not configured correctly.");
       }
 
       const response = await fetch("/api/arc/run-job", {
@@ -65,108 +65,117 @@ export function DemoConsole() {
         | null;
 
       if (!response.ok) {
-        throw new Error(payload?.error ?? "Live Arc job failed.");
+        throw new Error(payload?.error ?? "Arc speedrun failed.");
       }
 
       const jobId = payload?.jobId;
 
       if (!jobId) {
-        throw new Error("Arc job completed, but the response did not include a job id.");
+        throw new Error("Arc mission completed, but no job id came back.");
       }
 
       setAutopilotState("success");
-      setMessage(`Live job #${jobId} completed. Redirecting to the refreshed dashboard now.`);
+      setMessage(`Mission #${jobId} cleared. Redirecting to the replay board now.`);
 
       window.setTimeout(() => {
-        window.location.assign(`/?focusJob=${encodeURIComponent(jobId)}#live-feed`);
-      }, 1200);
+        window.location.assign(`/?focusJob=${encodeURIComponent(jobId)}#replay`);
+      }, 1300);
     } catch (error) {
       setAutopilotState("error");
-      setMessage(error instanceof Error ? error.message : "Unknown autopilot error.");
+      setMessage(error instanceof Error ? error.message : "Unknown speedrun error.");
     }
   }
 
   return (
-    <section className="surface" id="script">
-      <div className="section-head">
+    <section className="game-panel" id="speedrun">
+      <div className="panel-header">
         <div>
-          <span className="pill">Autopilot Demo</span>
-          <h2>One page for the whole presentation flow</h2>
+          <span className="eyebrow">Judge Speedrun</span>
+          <h2>One-click demo path</h2>
           <p>
-            Keep the pitch clean: start from the dashboard, run a new job, return to the live feed,
-            and end on the premium unlock.
+            Start the playable Arc loop, clear one live mission, jump to the replay board, then open
+            the premium vault.
           </p>
         </div>
 
-        <div className="toggle-row">
+        <div className="button-row">
           <button
-            className={`button ${pitchMode === "fast" ? "button--primary" : "button--ghost"}`}
-            onClick={() => setPitchMode("fast")}
+            className={`button ${mode === "fast" ? "button--primary" : "button--ghost"}`}
+            onClick={() => setMode("fast")}
             type="button"
           >
-            90s pitch
+            90-second mode
           </button>
           <button
-            className={`button ${pitchMode === "full" ? "button--primary" : "button--ghost"}`}
-            onClick={() => setPitchMode("full")}
+            className={`button ${mode === "full" ? "button--primary" : "button--ghost"}`}
+            onClick={() => setMode("full")}
             type="button"
           >
-            Full walkthrough
+            Full mode
           </button>
         </div>
       </div>
 
-      <div className="demo-toolbar">
-        <label className="field field--wide">
-          <span>ARC_ADMIN_API_TOKEN</span>
-          <input
-            autoComplete="off"
-            onChange={(event) => setToken(event.target.value)}
-            placeholder="Paste the admin token to enable one-click live runs"
-            type="password"
-            value={token}
-          />
-        </label>
+      <div className="console-grid">
+        <div className="console-card">
+          <label className="control-field">
+            <span>ARC_ADMIN_API_TOKEN</span>
+            <input
+              autoComplete="off"
+              onChange={(event) => setToken(event.target.value)}
+              placeholder="Paste the token to unlock one-click speedrun mode"
+              type="password"
+              value={token}
+            />
+          </label>
 
-        <div className="callout">
-          <span className="pill pill--soft">Autopilot status</span>
-          <p>{message}</p>
-          <div className="link-row">
+          <div className="button-row">
             <button
               className="button button--primary"
               disabled={autopilotState === "running"}
               onClick={handleAutopilot}
               type="button"
             >
-              {autopilotState === "running" ? "Running live job..." : "Run autopilot"}
+              {autopilotState === "running" ? "Running speedrun..." : "Run speedrun"}
             </button>
             <a className="button button--ghost" href="/">
-              Open dashboard
+              Open Arc Ops
             </a>
           </div>
+
+          <p className="helper-copy">{message}</p>
+        </div>
+
+        <div className="console-card console-card--result">
+          <span className="eyebrow eyebrow--soft">Required proof</span>
+          <h3>What judges must see</h3>
+          <ul className="check-list">
+            <li>One live Arc mission launched from the browser</li>
+            <li>The mission appearing on the replay board</li>
+            <li>One Arc explorer link opened from the tx trail</li>
+            <li>Circle Console context shown during the video</li>
+            <li>The premium vault endpoint opened at the end</li>
+          </ul>
         </div>
       </div>
 
-      <div className="step-grid">
+      <div className="replay-grid replay-grid--steps">
         {visibleSteps.map((step, index) => {
           const href = "role" in step ? buildRunJobHref(step.role, step.description, token) : step.href;
-          const helperText =
-            "role" in step
-              ? token.trim()
-                ? "Token detected. This button now launches a real Arc job directly."
-                : "No token yet. This opens the launcher with the prompt prefilled."
-              : step.outcome;
 
           return (
-            <article className="step-card" key={step.id}>
-              <div className="step-card__top">
-                <span className="pill pill--soft">Step {index + 1}</span>
+            <article className="replay-card" key={step.id}>
+              <div className="replay-card__head">
+                <div>
+                  <span className="eyebrow eyebrow--soft">Step {index + 1}</span>
+                  <h3>{step.title}</h3>
+                </div>
                 <strong>{step.timing}</strong>
               </div>
-              <h3>{step.title}</h3>
-              <p>{step.outcome}</p>
-              <div className="hint-box">{helperText}</div>
-              <div className="link-row">
+              <div className="replay-card__body">
+                <p>{step.outcome}</p>
+              </div>
+              <div className="button-row">
                 <a className="button button--primary" href={href} rel="noreferrer" target="_blank">
                   {step.buttonLabel}
                 </a>

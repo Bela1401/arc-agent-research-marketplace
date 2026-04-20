@@ -65,8 +65,11 @@ function renderHtmlResult(
       body {
         margin: 0;
         font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-        background: linear-gradient(180deg, #06101a 0%, #0b1d2d 100%);
-        color: #f3f8fb;
+        color: #edf8f5;
+        background:
+          radial-gradient(circle at 18% 0%, rgba(83,245,182,0.18), transparent 28%),
+          radial-gradient(circle at 82% 0%, rgba(135,234,255,0.1), transparent 22%),
+          linear-gradient(180deg, #020608 0%, #091015 100%);
       }
       main {
         width: min(960px, calc(100% - 2rem));
@@ -74,49 +77,62 @@ function renderHtmlResult(
         padding: 2rem 0 4rem;
       }
       .panel {
-        border: 1px solid rgba(124,170,197,0.18);
-        border-radius: 24px;
-        padding: 1.25rem;
-        background: rgba(10, 21, 33, 0.88);
-        box-shadow: 0 30px 90px rgba(1, 5, 10, 0.35);
+        border: 1px solid rgba(92,191,170,0.18);
+        border-radius: 28px;
+        padding: 1.4rem;
+        background: rgba(8, 18, 23, 0.9);
+        box-shadow: 0 28px 90px rgba(0, 3, 5, 0.4);
       }
-      .eyebrow {
+      .eyebrow, .status {
         display: inline-block;
-        padding: 0.25rem 0.7rem;
+        padding: 0.32rem 0.78rem;
         border-radius: 999px;
-        background: rgba(63, 224, 161, 0.14);
-        color: #3fe0a1;
+        background: rgba(83,245,182,0.14);
+        border: 1px solid rgba(83,245,182,0.18);
+        color: #53f5b6;
         text-transform: uppercase;
         letter-spacing: 0.08em;
         font-size: 0.75rem;
       }
-      h1 { margin: 0.8rem 0 0.5rem; font-size: clamp(2rem, 5vw, 3.4rem); }
-      p { color: #a8c0d0; line-height: 1.65; }
+      .status {
+        text-transform: none;
+        letter-spacing: 0;
+        background: rgba(135,234,255,0.08);
+        border-color: rgba(135,234,255,0.18);
+        color: #87eaff;
+      }
+      h1 {
+        margin: 0.85rem 0 0.45rem;
+        font-size: clamp(2.3rem, 6vw, 4.1rem);
+        line-height: 0.96;
+        letter-spacing: -0.06em;
+      }
+      p { color: #9fbab4; line-height: 1.68; }
       .grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
         gap: 1rem;
         margin: 1.5rem 0;
       }
       .stat {
-        border: 1px solid rgba(124,170,197,0.18);
+        border: 1px solid rgba(92,191,170,0.16);
         border-radius: 18px;
         padding: 1rem;
-        background: rgba(8, 18, 30, 0.72);
+        background: rgba(12, 28, 34, 0.76);
       }
-      .stat span { display: block; color: #a8c0d0; margin-bottom: 0.4rem; }
+      .stat span { display: block; color: #9fbab4; margin-bottom: 0.4rem; }
       .stat strong { font-size: 1.2rem; overflow-wrap: anywhere; }
       .tx-list { display: grid; gap: 0.8rem; margin-top: 1rem; }
       .tx {
         display: flex;
-        flex-direction: column;
-        gap: 0.4rem;
-        border: 1px solid rgba(124,170,197,0.18);
+        justify-content: space-between;
+        gap: 0.8rem;
+        border: 1px solid rgba(92,191,170,0.16);
         border-radius: 16px;
         padding: 0.9rem 1rem;
-        background: rgba(63, 224, 161, 0.06);
+        background: rgba(83,245,182,0.06);
         text-decoration: none;
-        color: #87f0ff;
+        color: #87eaff;
       }
       .actions {
         display: flex;
@@ -125,22 +141,32 @@ function renderHtmlResult(
         margin-top: 1.2rem;
       }
       .actions a {
-        border: 1px solid rgba(124,170,197,0.18);
+        border: 1px solid rgba(92,191,170,0.18);
         border-radius: 999px;
-        padding: 0.7rem 1rem;
+        padding: 0.78rem 1rem;
         text-decoration: none;
-        color: #f3f8fb;
+        color: #edf8f5;
+        background: rgba(255,255,255,0.03);
+      }
+      .lead {
+        max-width: 52rem;
+      }
+      @media (max-width: 720px) {
+        .tx {
+          flex-direction: column;
+          align-items: flex-start;
+        }
       }
     </style>
   </head>
   <body>
     <main>
       <section class="panel">
-        <div class="eyebrow">Browser job completed</div>
-        <h1>Arc job #${htmlEscape(result.jobId)}</h1>
-        <p>
-          The browser-triggered <strong>${htmlEscape(providerRole)}</strong> job finished with status
-          <strong> ${htmlEscape(result.status)}</strong>.
+        <div class="eyebrow">Mission cleared</div>
+        <h1>Arc mission #${htmlEscape(result.jobId)}</h1>
+        <p class="lead">
+          The browser-triggered <strong>${htmlEscape(providerRole)}</strong> mission finished with
+          status <strong>${htmlEscape(result.status)}</strong> and the replay trail is ready below.
         </p>
         <div class="grid">
           <div class="stat">
@@ -152,15 +178,15 @@ function renderHtmlResult(
             <strong>${htmlEscape(result.deliverableHash)}</strong>
           </div>
           <div class="stat">
-            <span>Description</span>
+            <span>Mission brief</span>
             <strong>${htmlEscape(description ?? "Default marketplace prompt")}</strong>
           </div>
         </div>
         <div class="tx-list">${txRows}</div>
         <div class="actions">
-          <a href="/launch">Open browser launcher</a>
-          <a href="${rerunUrl}">Build another ${htmlEscape(providerRole)} URL</a>
-          <a href="/">Back to dashboard</a>
+          <a href="/">Back to Arc Ops</a>
+          <a href="/launch">Open manual console</a>
+          <a href="${rerunUrl}">Build another ${htmlEscape(providerRole)} run</a>
         </div>
       </section>
     </main>

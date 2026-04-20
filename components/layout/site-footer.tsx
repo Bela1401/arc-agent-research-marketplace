@@ -4,24 +4,23 @@ export function SiteFooter() {
   return (
     <footer className="site-footer">
       <div className="site-footer__intro">
-        <span className="pill pill--soft">Arc + Circle + x402</span>
+        <span className="eyebrow eyebrow--soft">Arc + Circle + x402</span>
         <strong>{siteConfig.name}</strong>
         <p>
-          Live agent jobs, visible transaction rails, and premium report monetization in one clean
-          demo surface.
+          A compact mission-control game that turns the hackathon demo into a real Arc settlement loop.
         </p>
       </div>
 
       <div className="site-footer__links">
-        <a href="/">Dashboard</a>
-        <a href="/launch">Launcher</a>
-        <a href="/judges">Judge mode</a>
+        <a href="/">Game</a>
+        <a href="/launch">Manual console</a>
+        <a href="/judges">Judge speedrun</a>
         <a href="/submission">Submission kit</a>
         <a href="/api/arc/status" rel="noreferrer" target="_blank">
           API status
         </a>
         <a href="/api/reports/premium" rel="noreferrer" target="_blank">
-          Premium report
+          Premium vault
         </a>
         <a href={siteConfig.githubUrl} rel="noreferrer" target="_blank">
           GitHub
